@@ -1,49 +1,78 @@
-package com.twotwo.planter.auth
+package com.twotwo.planter.auth.controller
 
+import com.twotwo.planter.auth.dto.*
+import com.twotwo.planter.auth.service.AuthService
 import com.twotwo.planter.user.domain.User
-import com.twotwo.planter.user.dto.UserLoginReq
-import com.twotwo.planter.user.dto.UserLoginRes
-import com.twotwo.planter.user.dto.UserRegisterReq
-import com.twotwo.planter.user.dto.UserRegisterRes
+import com.twotwo.planter.util.BaseException
+import com.twotwo.planter.util.BaseResponse
+import com.twotwo.planter.util.BaseResponseCode.*
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/auth")
 class AuthController(private val authService: AuthService, private val passwordEncoder: PasswordEncoder) {
 
     @PostMapping("signup")
-    fun register(@RequestBody userRegisterReq: UserRegisterReq): ResponseEntity<UserRegisterRes> {
+    fun register(@RequestBody @Valid userRegisterReq: UserRegisterReq): BaseResponse<UserRegisterRes> {
 
-        // 이메일 형식 체크
-        // 비밀번호 형식 체크
-        // 생년월일 형식체크
-
-        if(authService.existsUser(userRegisterReq.email)) {
-            //throw BaseException(BaseResponseCode.DUPLICATE_EMAIL)
+        if(authService.existsEmail(userRegisterReq.email)) {
+            throw BaseException(DUPLICATE_EMAIL)
+        }
+        if(authService.existsPhone(userRegisterReq.phone)) {
+            throw BaseException(DUPLICATE_PHONE)
         }
         userRegisterReq.password = passwordEncoder.encode(userRegisterReq.password)
+        val userRegisterRes: UserRegisterRes = authService.createUser(userRegisterReq)
 
-        return ResponseEntity.ok(authService.createUser(userRegisterReq))
+        return BaseResponse(userRegisterRes)
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody userLoginReq: UserLoginReq): ResponseEntity<UserLoginRes> {
-        if(!authService.existsUser(userLoginReq.email)) {
-            //throw BaseException(BaseResponseCode.USER_NOT_FOUND)
+    fun login(@Valid @RequestBody userLoginReq: UserLoginReq): BaseResponse<UserLoginRes> {
+        if(!authService.existsEmail(userLoginReq.email)) {
+            throw BaseException(USER_NOT_FOUND)
         }
 
         val user: User = authService.findUser(userLoginReq.email)
 
         if(!passwordEncoder.matches(userLoginReq.password, user.password)) {
-            //throw BaseException(BaseResponseCode.INVALID_PASSWORD)
+            throw BaseException(CREDENTIAL_INVALID)
         }
 
-        return ResponseEntity.ok(authService.login(userLoginReq))
+        val userLoginRes = UserLoginRes(authService.login(user.id!!), user.id!!)
+
+        return BaseResponse(userLoginRes)
     }
 
+    @PostMapping("/send-code")
+    fun sendCertificateCode(@Valid @RequestBody sendCodeReq: SendCodeReq): BaseResponse<Any> {
+        authService.sendCertificateCode(sendCodeReq)
+        return BaseResponse(SUCCESS)
+    }
+
+    @PostMapping("/verify-code")
+    fun verifyCertificateCode(@Valid @RequestBody verifyCodeReq: VerifyCodeReq): BaseResponse<Any> {
+
+        val result = authService.verifyCertificateCode(verifyCodeReq)
+        if(result == 0){
+            throw BaseException(INVALID_CODE)
+        }
+        return BaseResponse(SUCCESS)
+    }
+
+    @GetMapping("/check-duplication")
+    fun checkDuplicate(@Valid @RequestParam checkDuplicateReq: CheckDuplicateReq): BaseResponse<Any> {
+        if(!authService.existsEmail(checkDuplicateReq.email)) {
+            throw BaseException(DUPLICATE_EMAIL)
+        }
+
+        if(!authService.existsPhone(checkDuplicateReq.phone)) {
+            throw BaseException(DUPLICATE_PHONE)
+        }
+
+        return BaseResponse(SUCCESS)
+    }
 }

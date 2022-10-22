@@ -1,4 +1,4 @@
-package com.twotwo.planter.user.dto
+package com.twotwo.planter.auth.dto
 
 data class UserLoginReq (
         val email: String,
