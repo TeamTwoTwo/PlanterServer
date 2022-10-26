@@ -1,10 +1,17 @@
 package com.twotwo.planter.user.controller
 
 import com.twotwo.planter.user.service.UserService
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.RestController
+import com.twotwo.planter.util.BaseResponse
+import com.twotwo.planter.util.BaseResponseCode
+import org.springframework.web.bind.annotation.*
 
 @RestController
-class UserController(private val userService: UserService, private val passwordEncoder: PasswordEncoder) {
+@RequestMapping("/users")
+class UserController(private val userService: UserService) {
+    @DeleteMapping("/{userId}")
+    fun deleteUser(@PathVariable userId: String): BaseResponse<Any> {
+        userService.deleteUser(userId.toLong())
 
+        return BaseResponse(BaseResponseCode.SUCCESS)
+    }
 }

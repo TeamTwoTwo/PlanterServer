@@ -41,7 +41,7 @@ class AuthController(private val authService: AuthService, private val passwordE
             throw BaseException(CREDENTIAL_INVALID)
         }
 
-        val userLoginRes = UserLoginRes(authService.login(user.id!!), user.id!!)
+        val userLoginRes = UserLoginRes(authService.login(user.id!!), user.id!!, user.email, user.name, user.birth, user.phone, user.address, user.detailAddress, user.latitude, user.longitude)
 
         return BaseResponse(userLoginRes)
     }
