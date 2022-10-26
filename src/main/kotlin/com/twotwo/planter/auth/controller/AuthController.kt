@@ -1,12 +1,11 @@
 package com.twotwo.planter.auth.controller
 
-import com.twotwo.planter.auth.dto.*
 import com.twotwo.planter.auth.service.AuthService
+import com.twotwo.planter.auth.dto.*
 import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode.*
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -42,7 +41,7 @@ class AuthController(private val authService: AuthService, private val passwordE
             throw BaseException(CREDENTIAL_INVALID)
         }
 
-        val userLoginRes = UserLoginRes(authService.login(user.id!!), user.id!!)
+        val userLoginRes = UserLoginRes(authService.login(user.id!!), user.id!!, user.email, user.name, user.birth, user.phone, user.address, user.detailAddress, user.latitude, user.longitude)
 
         return BaseResponse(userLoginRes)
     }

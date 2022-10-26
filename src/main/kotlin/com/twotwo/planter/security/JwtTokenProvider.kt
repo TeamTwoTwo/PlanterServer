@@ -1,9 +1,8 @@
-package com.twotwo.planter.auth
+package com.twotwo.planter.security
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -13,12 +12,9 @@ import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class JwtTokenProvider(private val userDetailsService: UserDetailsService) {
-    @Value("#{kotlinBeanWithProp.jwt_secret}")
-    lateinit var secretKey: String
-
-    @Value("#{kotlinBeanWithProp.jwt_validate_time}")
-    lateinit var tokenValidTime: String
+class JwtTokenProvider(private val userDetailsService: UserDetailsService, private val jwtProperties: JwtProperties) {
+    private var secretKey: String = jwtProperties.secretKey
+    private var tokenValidTime: Long = jwtProperties.validateTime
 
     @PostConstruct
     protected fun init() {
@@ -33,7 +29,7 @@ class JwtTokenProvider(private val userDetailsService: UserDetailsService) {
             .setHeaderParam("typ", "JWT")
             .setClaims(claims)
             .setIssuedAt(now)
-            .setExpiration(Date(now.time + tokenValidTime.toLong()))
+            .setExpiration(Date(now.time + tokenValidTime))
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact()
     }
