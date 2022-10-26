@@ -1,14 +1,14 @@
 package com.twotwo.planter.auth.service
 
-import com.twotwo.planter.auth.JwtTokenProvider
-import com.twotwo.planter.auth.dto.*
+import com.twotwo.planter.security.JwtTokenProvider
+import com.twotwo.planter.auth.dto.SendCodeReq
+import com.twotwo.planter.auth.dto.UserRegisterReq
+import com.twotwo.planter.auth.dto.UserRegisterRes
+import com.twotwo.planter.auth.dto.VerifyCodeReq
 import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.user.repository.UserRepository
-import com.twotwo.planter.util.BaseException
-import com.twotwo.planter.util.BaseResponseCode.*
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
-import javax.validation.Valid
 
 @Service
 class AuthService(private val userRepository: UserRepository, private val jwtTokenProvider: JwtTokenProvider, private val certificateCodeService: CertificateCodeService, private val smsService: SmsService) {

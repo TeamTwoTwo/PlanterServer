@@ -1,4 +1,3 @@
 package com.twotwo.planter.common.dto
 
-class ErrorResponse {
-}
+data class ErrorResponse (val isSuccess: Boolean, val code: Int, val message: String)

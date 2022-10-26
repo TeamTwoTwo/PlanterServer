@@ -1,4 +1,5 @@
 package com.twotwo.planter.util
 
-class BaseException {
+class BaseException(baseResponseCode: BaseResponseCode): RuntimeException() {
+    public val baseResponseCode: BaseResponseCode = baseResponseCode
 }

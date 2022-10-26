@@ -9,7 +9,7 @@ import java.time.Duration
 @Repository
 class CertificateCodeService(private val redisTemplate: RedisTemplate<String, String>) {
     val PREFIX = "signup:"
-    val LIMIT_TIME: Long = (3 * 60).toLong() // 유효시간 3분
+    val LIMIT_TIME: Long = (3 * 60).toLong() // 유효시간: 3분
 
     fun createSmsCertification(phone: String, certificationNumber: String?) {
         redisTemplate.opsForValue()

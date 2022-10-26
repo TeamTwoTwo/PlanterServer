@@ -1,12 +1,11 @@
 package com.twotwo.planter.auth.controller
 
-import com.twotwo.planter.auth.dto.*
 import com.twotwo.planter.auth.service.AuthService
+import com.twotwo.planter.auth.dto.*
 import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode.*
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid

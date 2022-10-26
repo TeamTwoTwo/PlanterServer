@@ -1,27 +1,34 @@
 package com.twotwo.planter.util
 
-import io.lettuce.core.dynamic.Commands
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
+@JsonPropertyOrder("isSuccess", "code", "message", "result")
+class BaseResponse<T> {
+    @JsonProperty("isSuccess")
+    private val isSuccess: Boolean
+    @JsonProperty("message")
+    private val message: String
+    @JsonProperty("code")
+    private val code: Int
 
-fun move(
-    @PathVariable name: String?,
-    @RequestBody moveDto: MoveDto
-): ResponseEntity<MoveResponseDto?>? {
-    val headers = HttpHeaders()
-    headers.set("Game", "Chess")
-    val command: String = makeMoveCmd(moveDto.getSource(), moveDto.getTarget())
-    springChessService.move(name, command, Commands(command))
-    val moveResponseDto = MoveResponseDto(
-        springChessService
-            .continuedGameInfo(name), name
-    )
-    return ResponseEntity<MoveResponseDto>(
-        moveResponseDto,
-        headers,
-        HttpStatus.valueOf(200)
-    )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("result")
+    private var result: T? = null
+
+    // success
+    constructor(result: T) {
+        this.isSuccess = BaseResponseCode.SUCCESS.isSuccess
+        this.message = BaseResponseCode.SUCCESS.message
+        this.code = BaseResponseCode.SUCCESS.code
+        this.result = result
+    }
+
+    // fail
+    constructor(status: BaseResponseCode) {
+        this.isSuccess = status.isSuccess
+        this.message = status.message
+        this.code = status.code
+    }
 }
