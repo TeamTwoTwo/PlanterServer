@@ -10,6 +10,7 @@ import javax.persistence.*
 class User(name: String, email: String, password: String, birth: String, phone: String, address: String, detailAddress: String?, latitude: Double?, longitude: Double?): BaseTime(), UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     var id: Long? = null
 
     @Column(nullable = false)
