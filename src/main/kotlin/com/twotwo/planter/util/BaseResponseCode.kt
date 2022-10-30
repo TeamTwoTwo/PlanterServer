@@ -9,8 +9,8 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     INVALID_CODE(false, 3002, HttpStatus.OK, "인증번호가 일치하지 않습니다"),
     DUPLICATE_PHONE(false, 3003, HttpStatus.OK, "중복된 휴대폰번호입니다"),
     USER_NOT_FOUND(false, 3004, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다"),
-    CREDENTIAL_INVALID(false, 3005, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다")
-;
+    CREDENTIAL_INVALID(false, 3005, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다"),
+    EMAIL_OR_PHONE_REQUIRED(false, 2006, HttpStatus.OK, "이메일 또는 휴대폰번호를 입력해주세요");
 
     val isSuccess: Boolean = isSuccess
     val code: Int = code
