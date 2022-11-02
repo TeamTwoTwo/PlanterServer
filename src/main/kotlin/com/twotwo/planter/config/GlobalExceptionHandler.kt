@@ -32,9 +32,9 @@ class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
             val code = error.defaultMessage!!.split(':')[0].toInt()
             val message = error.defaultMessage!!.split(':')[1]
             val errorResponse = ErrorResponse(false, code, message)
-            return ResponseEntity(errorResponse, headers, status)
+            return ResponseEntity(errorResponse, headers, HttpStatus.OK)
         }
-        return ResponseEntity(ErrorResponse(false, 4000, error.defaultMessage!!), headers, status)
+        return ResponseEntity(ErrorResponse(false, 4000, error.defaultMessage!!), headers, HttpStatus.OK)
     }
 
     override fun handleExceptionInternal(
@@ -52,6 +52,9 @@ class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
         } else {
             ErrorResponse(false, status.value(), ex.message!!)
         }
-        return ResponseEntity(errorResponseDto, headers, status)
+        if(errorResponseDto.code == 5000){
+            return ResponseEntity(errorResponseDto, headers, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        return ResponseEntity(errorResponseDto, headers, HttpStatus.OK)
     }
 }
