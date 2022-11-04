@@ -12,5 +12,6 @@ data class CreatePlantManagerReq (
     val profileImg: String,
     val pruningPrice: Int,
     val category: PlantManagerCategory,
-    val is_photo: Boolean
+    val is_photo: Boolean,
+    val introduction: String
     )

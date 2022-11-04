@@ -11,5 +11,4 @@ class UserService(private val userRepository: UserRepository, private val jwtTok
     fun deleteUser(userId: Long) {
         userRepository.deleteById(userId)
     }
-
 }

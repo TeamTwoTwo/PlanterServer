@@ -1,10 +1,11 @@
 package com.twotwo.planter.manager.domain
 
+import com.twotwo.planter.review.domain.Review
 import com.twotwo.planter.util.BaseTime
 import javax.persistence.*
 
 @Entity
-class PlantManager(name: String, profileImg: String, description: String, caringPrice: Int, pruningPrice: Int, address: String, latitude: Double, longitude: Double, isPhoto: Boolean, category: PlantManagerCategory): BaseTime() {
+class PlantManager(name: String, profileImg: String, description: String, caringPrice: Int, pruningPrice: Int, address: String, latitude: Double, longitude: Double, isPhoto: Boolean, category: PlantManagerCategory, introduction: String): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plant_manager_id")
@@ -21,11 +22,15 @@ class PlantManager(name: String, profileImg: String, description: String, caring
     var latitude: Double = latitude
     var longitude: Double = longitude
     var isPhoto: Boolean = isPhoto
+    var introduction: String = introduction
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var category: PlantManagerCategory = category
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plantManager")
+    var images: List<ManagerImg?>? = ArrayList<ManagerImg>()
+
     @OneToMany(mappedBy = "plantManager")
-    var images: List<ManagerImg> = ArrayList<ManagerImg>()
+    var reviews: List<Review>? = ArrayList<Review>()
 }

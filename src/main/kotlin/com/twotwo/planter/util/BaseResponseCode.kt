@@ -13,7 +13,10 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     INVALID_CODE(false, 3002, HttpStatus.OK, "인증번호가 일치하지 않습니다"),
     DUPLICATE_PHONE(false, 3003, HttpStatus.OK, "중복된 휴대폰번호입니다"),
     USER_NOT_FOUND(false, 3004, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다"),
-    CREDENTIAL_INVALID(false, 3005, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다");
+    CREDENTIAL_INVALID(false, 3005, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다"),
+    PLANTER_MANAGER_NOT_FOUND(false, 3006, HttpStatus.OK, "존재하지 않는 식물관리자입니다"),
+
+    AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요");
 
     val isSuccess: Boolean = isSuccess
     val code: Int = code

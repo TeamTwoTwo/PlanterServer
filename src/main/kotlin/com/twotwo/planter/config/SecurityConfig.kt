@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @EnableWebSecurity
-class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider): WebSecurityConfigurerAdapter() {
+class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider, private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint): WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -36,5 +36,7 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider): WebSecurit
             .antMatchers("/auth/**", "/signup/**", "/login/**", "/logout/**").permitAll()
             .and()
             .addFilterBefore(JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
+            .exceptionHandling()
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
     }
 }
