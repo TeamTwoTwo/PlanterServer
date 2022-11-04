@@ -28,9 +28,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
                             @RequestParam(required = false, defaultValue = "0") longitude: Double): BaseResponse<Any> {
 
         val userDetails: UserDetails = authentication.principal as UserDetails
-        println(userDetails.username)
         val user = userService.findUser(userDetails.username)
-        println(user.id)
 
         val categoryList = arrayListOf<PlantManagerCategory>()
         for (item in category) {

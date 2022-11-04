@@ -9,7 +9,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "UserInfo")
-class User(name: String, email: String, password: String, birth: String, phone: String, address: String, detailAddress: String?, latitude: Double?, longitude: Double?): BaseTime(), UserDetails {
+class User(name: String, email: String, password: String, birth: String, phone: String, address: String, detailAddress: String?, latitude: Double?, longitude: Double?, profileImg: String?): BaseTime(), UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -41,6 +41,9 @@ class User(name: String, email: String, password: String, birth: String, phone: 
 
     @Column
     var longitude: Double? = longitude
+
+    @Column
+    var profileImg: String? = profileImg
 
     @OneToMany(mappedBy = "user")
     var reviews: List<Review> = ArrayList<Review>()
