@@ -24,17 +24,12 @@ class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider) : 
 
         val authorizationHeader: String? = request.getHeader("Authorization") ?: return filterChain.doFilter(request, response)
         val token = authorizationHeader?.substring("Bearer ".length) ?: return filterChain.doFilter(request, response)
-        println("filter내부")
-        println("token")
-        println(token)
         if (jwtTokenProvider.validation(token)) {
-            println("validation 통과!")
             val userId = jwtTokenProvider.parsePk(token)
-            val authentication: Authentication = jwtTokenProvider.getAuthentication(userId)
+            val authentication: Authentication = jwtTokenProvider.getAuthentication(userId.toString())
 
             SecurityContextHolder.getContext().authentication = authentication
         }
-
         filterChain.doFilter(request, response)
     }
 }

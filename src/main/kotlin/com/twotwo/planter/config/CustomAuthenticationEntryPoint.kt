@@ -21,6 +21,8 @@ class CustomAuthenticationEntryPoint : AuthenticationEntryPoint {
         response: HttpServletResponse?,
         exception: AuthenticationException?
     ) {
+        println("hihi")
+        println(exception)
         request!!
         val errorResponse: BaseResponse<Any> = BaseResponse(BaseResponseCode.AUTHENTICATE_FAILED)
         response?.status = HttpStatus.UNAUTHORIZED.value()

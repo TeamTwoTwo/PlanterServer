@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/plant-managers")
-class PlantManagerController(private val plantManagerService: PlantManagerService, private val authService: AuthService) {
+class PlantManagerController(private val plantManagerService: PlantManagerService, private val userService: UserService) {
     val categoryEnumList = arrayListOf(PlantManagerCategory.HOUSE, PlantManagerCategory.FLORIST, PlantManagerCategory.EXPERT, PlantManagerCategory.SERVICE)
 
     @GetMapping("")
@@ -28,8 +28,9 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
                             @RequestParam(required = false, defaultValue = "0") longitude: Double): BaseResponse<Any> {
 
         val userDetails: UserDetails = authentication.principal as UserDetails
-        println(userDetails)
-        //val user = userService.findUser(userDetails.username)
+        println(userDetails.username)
+        val user = userService.findUser(userDetails.username)
+        println(user.id)
 
         val categoryList = arrayListOf<PlantManagerCategory>()
         for (item in category) {

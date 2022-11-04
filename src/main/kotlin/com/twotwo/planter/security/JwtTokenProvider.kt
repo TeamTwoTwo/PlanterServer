@@ -1,6 +1,7 @@
 package com.twotwo.planter.security
 
 import com.twotwo.planter.auth.exception.AuthenticateException
+import com.twotwo.planter.user.service.UserDetailService
 import com.twotwo.planter.user.service.UserService
 import io.jsonwebtoken.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -12,14 +13,9 @@ import java.util.*
 import javax.annotation.PostConstruct
 
 @Component
-class JwtTokenProvider(private val userDetailsService: UserDetailsService, private val jwtProperties: JwtProperties) {
-    private var secretKey: String = jwtProperties.secretKey
+class JwtTokenProvider(private val userDetailService: UserDetailService, private val jwtProperties: JwtProperties) {
+    private var secretKey: String = Base64.getEncoder().encodeToString(jwtProperties.secretKey.toByteArray())
     private var tokenValidTime: Long = jwtProperties.validateTime
-
-    @PostConstruct
-    protected fun init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.toByteArray())
-    }
 
     fun createToken(userId: Long): String {
         val claims: Claims = Jwts.claims().setSubject("userId")
@@ -40,20 +36,25 @@ class JwtTokenProvider(private val userDetailsService: UserDetailsService, priva
         return exp.after(Date())
     }
 
-    fun parsePk(token: String): String {
+    fun parsePk(token: String): Int {
         val claims: Claims = getAllClaims(token)
-        return claims["userId"] as String
+        return claims["userId"] as Int
     }
 
     fun getAuthentication(userId: String): Authentication {
-        val userDetails: UserDetails = userDetailsService.loadUserByUsername(userId)
+        val userDetails: UserDetails = userDetailService.loadUserByUsername(userId)
         return UsernamePasswordAuthenticationToken(userDetails, "", mutableListOf())
     }
 
     private fun getAllClaims(token: String): Claims {
         try {
-            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body
-        } catch (expiredJwtException: ExpiredJwtException) {
+            val response = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body
+            return response
+        } catch(exception: Throwable) {
+            println(exception)
+            throw exception
+        }
+        catch (expiredJwtException: ExpiredJwtException) {
             throw AuthenticateException("")
         } catch (unsupportedJwtException: UnsupportedJwtException) {
             throw AuthenticateException("")
