@@ -6,11 +6,11 @@ data class ErrorResponse(
     @field:JsonProperty("isSuccess")
     var isSuccess: Boolean? = false,
 
-    @field:JsonProperty("errorCode")
-    var errorCode: String? = null,
+    @field:JsonProperty("code")
+    var code: Int? = null,
 
-    @field:JsonProperty("errorMessage")
-    var errorMessage: String? = null,
+    @field:JsonProperty("message")
+    var message: String? = null,
 )
 
 data class Error(

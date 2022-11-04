@@ -46,7 +46,7 @@ class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any> {
         var errorResponseDto: ErrorResponse
         errorResponseDto = if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
-            ErrorResponse(false, 5000, "Internal Server Error")
+            ErrorResponse(false, 5001, "Internal Server Error")
         } else if(status == HttpStatus.BAD_REQUEST) {
             ErrorResponse(false, 4000, "Bad Request")
         } else {

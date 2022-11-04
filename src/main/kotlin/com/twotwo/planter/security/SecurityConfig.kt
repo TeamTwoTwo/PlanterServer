@@ -1,7 +1,6 @@
-package com.twotwo.planter.config
+package com.twotwo.planter.security
 
-import com.twotwo.planter.security.JwtAuthenticationFilter
-import com.twotwo.planter.security.JwtTokenProvider
+import com.twotwo.planter.config.CustomAuthenticationEntryPoint
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -13,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @EnableWebSecurity
-class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider): WebSecurityConfigurerAdapter() {
+class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider, private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint): WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -32,9 +31,11 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider): WebSecurit
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers("/api/**").authenticated()
             .antMatchers("/auth/**", "/signup/**", "/login/**", "/logout/**").permitAll()
+            .antMatchers("/", "/**").authenticated()
             .and()
             .addFilterBefore(JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
+            .exceptionHandling()
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
     }
 }

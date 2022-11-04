@@ -1,25 +1,21 @@
 package com.twotwo.planter.security
 
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import com.twotwo.planter.auth.exception.AuthenticateException
+import com.twotwo.planter.user.service.UserDetailService
+import com.twotwo.planter.user.service.UserService
+import io.jsonwebtoken.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import java.util.*
 import javax.annotation.PostConstruct
-import javax.servlet.http.HttpServletRequest
 
 @Component
-class JwtTokenProvider(private val userDetailsService: UserDetailsService, private val jwtProperties: JwtProperties) {
-    private var secretKey: String = jwtProperties.secretKey
+class JwtTokenProvider(private val userDetailService: UserDetailService, private val jwtProperties: JwtProperties) {
+    private var secretKey: String = Base64.getEncoder().encodeToString(jwtProperties.secretKey.toByteArray())
     private var tokenValidTime: Long = jwtProperties.validateTime
-
-    @PostConstruct
-    protected fun init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.toByteArray())
-    }
 
     fun createToken(userId: Long): String {
         val claims: Claims = Jwts.claims().setSubject("userId")
@@ -34,25 +30,40 @@ class JwtTokenProvider(private val userDetailsService: UserDetailsService, priva
             .compact()
     }
 
-    fun getAuthentication(token: String): Authentication {
-        val userDetails = userDetailsService.loadUserByUsername(getUserPk(token))
-        return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
+    fun validation(token: String) : Boolean {
+        val claims: Claims = getAllClaims(token)
+        val exp: Date = claims.expiration
+        return exp.after(Date())
     }
 
-    fun getUserPk(token: String): String {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body.subject
+    fun parsePk(token: String): Int {
+        val claims: Claims = getAllClaims(token)
+        return claims["userId"] as Int
     }
 
-    fun resolveToken(request: HttpServletRequest): String? {
-        return request.getHeader("Authorization")
+    fun getAuthentication(userId: String): Authentication {
+        val userDetails: UserDetails = userDetailService.loadUserByUsername(userId)
+        return UsernamePasswordAuthenticationToken(userDetails, "", mutableListOf())
     }
 
-    fun validateToken(jwtToken: String): Boolean {
-        return try {
-            val claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken)
-            !claims.body.expiration.before(Date())
-        } catch (e: Exception) {
-            false
+    private fun getAllClaims(token: String): Claims {
+        try {
+            val response = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body
+            return response
+        } catch(exception: Throwable) {
+            println(exception)
+            throw exception
+        }
+        catch (expiredJwtException: ExpiredJwtException) {
+            throw AuthenticateException("")
+        } catch (unsupportedJwtException: UnsupportedJwtException) {
+            throw AuthenticateException("")
+        } catch (malformedJwtException: MalformedJwtException) {
+            throw AuthenticateException("")
+        } catch (signatureException: SignatureException) {
+            throw AuthenticateException("")
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            throw AuthenticateException("")
         }
     }
 }
