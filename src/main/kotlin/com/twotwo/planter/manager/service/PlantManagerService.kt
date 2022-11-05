@@ -30,5 +30,4 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
     ) {
         plantManagerepository.save(plantManager)
     }
-
 }

@@ -1,6 +1,7 @@
 package com.twotwo.planter.user.domain
 
 import com.twotwo.planter.manager.domain.ManagerImg
+import com.twotwo.planter.message.domain.Message
 import com.twotwo.planter.review.domain.Review
 import com.twotwo.planter.util.BaseTime
 import org.springframework.security.core.GrantedAuthority
@@ -47,6 +48,9 @@ class User(name: String, email: String, password: String, birth: String, phone: 
 
     @OneToMany(mappedBy = "user")
     var reviews: List<Review> = ArrayList<Review>()
+
+    @OneToMany(mappedBy = "user")
+    var messages: List<Message> = ArrayList<Message>()
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
         return null
