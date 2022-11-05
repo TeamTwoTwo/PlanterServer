@@ -38,7 +38,7 @@ class MessageController(private val messageService: MessageService, private val 
                 }
             }
             response.add(
-                GetMessageGroupRes(message.id!!, message.plantManager.profileImg, message.plantManager.name, 0,
+                GetMessageGroupRes(message.plantManager.id!!, message.plantManager.profileImg, message.plantManager.name, 0,
                message.contents, message.createdAt!!.format(DateTimeFormatter.ofPattern("a hh:mm")), !message.isRead)
             )
         }
