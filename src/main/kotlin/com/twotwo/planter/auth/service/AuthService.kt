@@ -31,7 +31,7 @@ class AuthService(private val userRepository: UserRepository, private val userSe
     }
 
     fun createUser(userRegisterReq: UserRegisterReq): UserRegisterRes {
-        val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone, userRegisterReq.address, userRegisterReq.detailAddress, userRegisterReq.latitude, userRegisterReq.longitude)
+        val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone, userRegisterReq.address, userRegisterReq.detailAddress, userRegisterReq.latitude, userRegisterReq.longitude, null)
         val createdUser = userRepository.save(user)
         val token = jwtTokenProvider.createToken(createdUser.id!!)
 
