@@ -15,6 +15,7 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     USER_NOT_FOUND(false, 3004, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다"),
     CREDENTIAL_INVALID(false, 3005, HttpStatus.OK, "이메일, 비밀번호가 일치하지 않습니다"),
     PLANTER_MANAGER_NOT_FOUND(false, 3006, HttpStatus.OK, "존재하지 않는 식물관리자입니다"),
+    MATCHING_NOT_FOUND(false, 3007, HttpStatus.OK, "존재하지 않는 매칭입니다"),
 
     AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요");
 

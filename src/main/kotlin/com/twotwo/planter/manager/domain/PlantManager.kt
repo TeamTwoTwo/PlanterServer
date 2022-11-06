@@ -33,4 +33,7 @@ class PlantManager(name: String, profileImg: String, description: String, caring
 
     @OneToMany(mappedBy = "plantManager")
     var reviews: List<Review>? = ArrayList<Review>()
+
+    @OneToMany(mappedBy = "plantManager")
+    var plantCares: List<PlantCareOption>? = ArrayList<PlantCareOption>()
 }
