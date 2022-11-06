@@ -3,7 +3,9 @@ package com.twotwo.planter.matching.controller
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.manager.util.PlantManagerUtil
 import com.twotwo.planter.matching.domain.MatchingStatus
+import com.twotwo.planter.matching.dto.GetMatchingDetailRes
 import com.twotwo.planter.matching.dto.GetMatchingListRes
+import com.twotwo.planter.matching.dto.PlantServiceRes
 import com.twotwo.planter.matching.service.MatchingService
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseResponse
@@ -11,12 +13,11 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping("")
 class MatchingController(private val matchingService: MatchingService, private val userService: UserService, private val plantManagerService: PlantManagerService, private val plantManagerUtil:  PlantManagerUtil) {
-    val matchingEnumList = arrayListOf(MatchingStatus.REQUEST, MatchingStatus.CARE, MatchingStatus.COMPLETE, MatchingStatus.CANCLE)
-
     @GetMapping("/matchings")
     fun getMatchingList(authentication: Authentication): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
@@ -34,7 +35,7 @@ class MatchingController(private val matchingService: MatchingService, private v
                     matching.plantManager.name,
                     plantManagerUtil.getCategoryInt(matching.plantManager.category),
                     matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-                    matchingEnumList.indexOf(matching.status)
+                    matching.status.toString().lowercase()
                 )
             )
         }
@@ -42,33 +43,29 @@ class MatchingController(private val matchingService: MatchingService, private v
         return BaseResponse(response)
     }
 
-    /*@GetMapping("/plant-managers/{plantManagerId}/matchings")
-    fun getMatching(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<Any> {
+    @GetMapping("matchings/{matchingId}")
+    fun getMatchingDetail(authentication: Authentication, @PathVariable matchingId: Long): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val matchings = matchingService.getMatchingDetail(user.id!!, plantManagerId)
-        val response = arrayListOf<GetMatchingDetailRes>()
-
-        for (matching in matchings) {
-            val images = arrayListOf<String>()
-            if (matching.images !== null) {
-                for (image in matching.images!!) {
-                    images.add(image!!.imageUrl)
-                }
-            }
-            response.add(
-                GetMatchingDetailRes(
-                    matching.id!!, matching.sender === SenderType.USER,
-                    matching.contents, images, matching.createdAt!!.format(DateTimeFormatter.ofPattern("a hh:mm"))
-                )
-            )
+        val matching = matchingService.getMatchingDetail(matchingId)
+        val service = arrayListOf<PlantServiceRes>()
+        var totalPrice = 0
+        for(plant in matching.plants){
+            service.add(PlantServiceRes(plant.name, plant.count, plant.plantCareOption.price, plant.plantCareOption.name))
+            totalPrice += plant.plantCareOption.price * plant.count
         }
+        val response = GetMatchingDetailRes(matching.id!!, matching.plantManager.id!!, matching.plantManager.profileImg, matching.plantManager.name,
+            plantManagerUtil.getCategoryInt(matching.plantManager.category),
+            matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), matching.status.toString().lowercase(),
+            service, totalPrice, matching.startDate.format(DateTimeFormatter.ofPattern("MM.dd")), matching.endDate.format(DateTimeFormatter.ofPattern("MM.dd")),
+            ChronoUnit.DAYS.between(matching.startDate, matching.endDate), matching.pickUpType.ordinal
+            )
 
         return BaseResponse(response)
     }
 
-    @PostMapping("/matchings")
+    /*@PostMapping("/matchings")
     fun sendMatching(authentication: Authentication, @RequestBody sendMatchingReq: SendMatchingReq): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)

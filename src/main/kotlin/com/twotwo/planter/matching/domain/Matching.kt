@@ -12,7 +12,7 @@ import java.time.LocalDate
 import javax.persistence.*
 
 @Entity
-class Matching(status: MatchingStatus, totalPrice: Int, date: LocalDate, user: User, plantManager: PlantManager): BaseTime() {
+class Matching(status: MatchingStatus, startDate: LocalDate, endDate: LocalDate, pickUpType: PickUpType, user: User, plantManager: PlantManager): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matching_id")
@@ -23,13 +23,17 @@ class Matching(status: MatchingStatus, totalPrice: Int, date: LocalDate, user: U
     var status: MatchingStatus = status
 
     @Column(nullable = false)
-    var totalPrice: Int = totalPrice
+    var startDate: LocalDate = startDate
 
     @Column(nullable = false)
-    var date: LocalDate = date
+    var endDate: LocalDate = endDate
 
-    @OneToMany(mappedBy = "matching")
-    var plants: List<Plant> = arrayListOf()
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var pickUpType: PickUpType = pickUpType
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "matching")
+    var plants: List<PlantService> = arrayListOf()
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

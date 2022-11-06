@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MatchingRepository: JpaRepository<Matching, Long> {
-    fun findAllByUserId(userId: Long): List<Matching>
+    fun findAllByUserIdOrderByCreatedAtDesc(userId: Long): List<Matching>
+    fun findMatchingById(matchingId: Long): Matching?
 }

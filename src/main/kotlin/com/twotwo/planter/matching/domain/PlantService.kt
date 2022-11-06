@@ -1,12 +1,11 @@
 package com.twotwo.planter.matching.domain
 
+import com.twotwo.planter.manager.domain.PlantCareOption
 import com.twotwo.planter.util.BaseTime
-import org.hibernate.annotations.ColumnDefault
-import org.hibernate.annotations.DynamicInsert
 import javax.persistence.*
 
 @Entity
-class Plant(name: String, care: Boolean, pruning: Boolean, matching: Matching): BaseTime() {
+class PlantService(name: String, count: Int, matching: Matching, plantCareOption: PlantCareOption): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plant_id")
@@ -16,12 +15,13 @@ class Plant(name: String, care: Boolean, pruning: Boolean, matching: Matching): 
     var name: String = name
 
     @Column(nullable = false)
-    var care: Boolean = care
-
-    @Column(nullable = false)
-    var pruning: Boolean = pruning
+    var count: Int = count
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matching_id")
     var matching: Matching = matching
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "plant_care_option_id")
+    var plantCareOption: PlantCareOption = plantCareOption
 }

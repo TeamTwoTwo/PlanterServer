@@ -7,5 +7,5 @@ data class GetMatchingListRes (
     val name: String,
     val category: Int,
     val requestAt: String,
-    val status: Int
+    val status: String
     )
