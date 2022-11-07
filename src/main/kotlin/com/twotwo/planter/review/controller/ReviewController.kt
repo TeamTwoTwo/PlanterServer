@@ -10,18 +10,17 @@ import com.twotwo.planter.review.service.ReviewImgService
 import com.twotwo.planter.review.service.ReviewService
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseResponse
-import com.twotwo.planter.util.BaseResponseCode
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import java.time.format.DateTimeFormatter
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("")
 class ReviewController(private val reviewService: ReviewService, private val reviewImgService: ReviewImgService, private val userService: UserService, private val plantManagerService: PlantManagerService) {
-    @GetMapping("")
-    fun getReviewList(authentication: Authentication): BaseResponse<Any> {
-        val reviews = reviewService.getReviewList()
+    @GetMapping("/plant-managers/{plantManagerId}/reviews")
+    fun getReviewList(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<Any> {
+        val reviews = reviewService.getReviewList(plantManagerId)
         val response = arrayListOf<GetReviewListRes>()
 
         for(review in reviews){
@@ -38,7 +37,7 @@ class ReviewController(private val reviewService: ReviewService, private val rev
         return BaseResponse(response)
     }
 
-    @PostMapping("")
+    @PostMapping("/reviews")
     fun writeReview(authentication: Authentication, @RequestBody writeReviewReq: WriteReviewReq): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
