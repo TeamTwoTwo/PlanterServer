@@ -17,7 +17,8 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     PLANTER_MANAGER_NOT_FOUND(false, 3006, HttpStatus.OK, "존재하지 않는 식물관리자입니다"),
     MATCHING_NOT_FOUND(false, 3007, HttpStatus.OK, "존재하지 않는 매칭입니다"),
 
-    AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요");
+    AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요"),
+    FILE_UPLOAD_FAIL(false, 4002, HttpStatus.OK, "파일업로드에 실패했습니다");
 
     val isSuccess: Boolean = isSuccess
     val code: Int = code

@@ -1,5 +1,6 @@
 package com.twotwo.planter.message.controller
 
+import com.twotwo.planter.common.service.AwsS3Service
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.message.domain.Message
 import com.twotwo.planter.message.domain.MessageImg
@@ -11,6 +12,10 @@ import com.twotwo.planter.message.dto.SendMessageReq
 import com.twotwo.planter.message.dto.SendMessageRes
 import com.twotwo.planter.message.service.MessageImgService
 import com.twotwo.planter.message.service.MessageService
+import com.twotwo.planter.review.domain.Review
+import com.twotwo.planter.review.domain.ReviewImg
+import com.twotwo.planter.review.dto.WriteReviewReq
+import com.twotwo.planter.review.dto.WriteReviewRes
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode
@@ -21,7 +26,7 @@ import java.time.format.DateTimeFormatter
 
 @RestController
 @RequestMapping("")
-class MessageController(private val messageService: MessageService, private val messageImgService: MessageImgService, private val userService: UserService, private val plantManagerService: PlantManagerService) {
+class MessageController(private val messageService: MessageService, private val messageImgService: MessageImgService, private val userService: UserService, private val plantManagerService: PlantManagerService, private val awsS3Service: AwsS3Service) {
     @GetMapping("/messages")
     fun getMessageList(authentication: Authentication): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
@@ -71,7 +76,7 @@ class MessageController(private val messageService: MessageService, private val 
     }
 
     @PostMapping("/messages")
-    fun sendMessage(authentication: Authentication, @RequestBody sendMessageReq: SendMessageReq): BaseResponse<Any> {
+    fun sendMessage(authentication: Authentication, @ModelAttribute sendMessageReq: SendMessageReq): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
         val plantManager = plantManagerService.getPlantManager(sendMessageReq.plantManagerId)
@@ -79,7 +84,8 @@ class MessageController(private val messageService: MessageService, private val 
         val message = messageService.createMessage(Message(sendMessageReq.contents, MessageStatus.ACTIVE, false, SenderType.USER, user, plantManager))
         if(sendMessageReq.images !== null){
             for(image in sendMessageReq.images){
-                messageImgService.createMessageImg(MessageImg(image, message))
+                val uploadedUrl = awsS3Service.uploadFile("message", image)
+                messageImgService.createMessageImg(MessageImg(uploadedUrl, message))
             }
         }
         val response = SendMessageRes(message.id!!)

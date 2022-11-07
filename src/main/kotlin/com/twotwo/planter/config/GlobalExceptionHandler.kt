@@ -10,8 +10,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import javax.lang.model.type.NullType
+
 
 @RestControllerAdvice
 class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
@@ -56,5 +58,13 @@ class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
             return ResponseEntity(errorResponseDto, headers, HttpStatus.INTERNAL_SERVER_ERROR)
         }
         return ResponseEntity(errorResponseDto, headers, HttpStatus.OK)
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException::class)
+    protected fun handleMaxUploadSizeExceededException(
+        e: MaxUploadSizeExceededException?
+    ): ResponseEntity<ErrorResponse?>? {
+        val response = ErrorResponse(false, 4001, "파일 용량 초과")
+        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
     }
 }
