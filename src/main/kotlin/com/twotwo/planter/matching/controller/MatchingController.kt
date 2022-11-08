@@ -5,15 +5,19 @@ import com.twotwo.planter.manager.util.PlantManagerUtil
 import com.twotwo.planter.matching.domain.MatchingStatus
 import com.twotwo.planter.matching.dto.GetMatchingDetailRes
 import com.twotwo.planter.matching.dto.GetMatchingListRes
+import com.twotwo.planter.matching.dto.ModifyMatchingStatus
 import com.twotwo.planter.matching.dto.PlantServiceRes
 import com.twotwo.planter.matching.service.MatchingService
 import com.twotwo.planter.user.service.UserService
+import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
+import com.twotwo.planter.util.BaseResponseCode.*
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("")
@@ -43,7 +47,7 @@ class MatchingController(private val matchingService: MatchingService, private v
         return BaseResponse(response)
     }
 
-    @GetMapping("matchings/{matchingId}")
+    @GetMapping("/matchings/{matchingId}")
     fun getMatchingDetail(authentication: Authentication, @PathVariable matchingId: Long): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
@@ -89,15 +93,24 @@ class MatchingController(private val matchingService: MatchingService, private v
         val response = SendMatchingRes(matching.id!!)
 
         return BaseResponse(response)
-    }
+    }*/
 
-    @PatchMapping("/plant-managers/{plantManagerId}/matchings/status")
-    fun deleteMatching(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<Any> {
+    @PatchMapping("/matchings/{matchingId}")
+    fun modifyMatchingStatus(authentication: Authentication, @PathVariable matchingId: Long, @Valid @RequestBody modifyMatchingStatus: ModifyMatchingStatus): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        matchingService.updateMatchingStatusToDelete(user.id!!, plantManagerId)
+        if(modifyMatchingStatus.status != "cancel" && modifyMatchingStatus.status != "complete"){
+            throw BaseException(MATCHING_STATUS_INVALID)
+        }
 
-        return BaseResponse(BaseResponseCode.SUCCESS)
-    }*/
+        var status = MatchingStatus.CANCEL
+        if(modifyMatchingStatus.status == "complete") {
+            status = MatchingStatus.COMPLETE
+        }
+
+        matchingService.updateMatchingStatus(user.id!!, matchingId, status)
+
+        return BaseResponse(SUCCESS)
+    }
 }

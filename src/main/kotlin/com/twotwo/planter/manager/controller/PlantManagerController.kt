@@ -34,7 +34,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
         for (item in category) {
             categoryList.add(categoryEnumList[item])
             if(item < 0 || item >= 4) {
-                throw BaseException(BaseResponseCode.CATEGORY_VALUE_INVAID)
+                throw BaseException(BaseResponseCode.CATEGORY_VALUE_INVALID)
             }
         }
         if(sort < 0 || sort > 1) {
