@@ -47,9 +47,6 @@ class User(name: String, email: String, password: String, birth: String, phone: 
     var profileImg: String? = profileImg
 
     @OneToMany(mappedBy = "user")
-    var reviews: List<Review> = ArrayList<Review>()
-
-    @OneToMany(mappedBy = "user")
     var messages: List<Message> = ArrayList<Message>()
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {

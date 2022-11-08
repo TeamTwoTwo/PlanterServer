@@ -63,7 +63,7 @@ class MatchingController(private val matchingService: MatchingService, private v
             plantManagerUtil.getCategoryInt(matching.plantManager.category),
             matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), matching.status.toString().lowercase(),
             service, totalPrice, matching.startDate.format(DateTimeFormatter.ofPattern("MM.dd")), matching.endDate.format(DateTimeFormatter.ofPattern("MM.dd")),
-            ChronoUnit.DAYS.between(matching.startDate, matching.endDate), matching.pickUpType.ordinal
+            ChronoUnit.DAYS.between(matching.startDate, matching.endDate), matching.pickUpType.ordinal, 1
             )
 
         return BaseResponse(response)

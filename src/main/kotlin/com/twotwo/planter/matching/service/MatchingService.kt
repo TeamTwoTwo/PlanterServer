@@ -45,6 +45,15 @@ class MatchingService(private val matchingRepository: MatchingRepository) {
         return 1
     }
 
+    fun getMatchingById(matchingId: Long): Matching {
+        val matching = matchingRepository.findMatchingById(matchingId)
+
+        if(matching === null){
+            throw BaseException(MATCHING_NOT_FOUND)
+        }
+        return matching
+    }
+
     /*
     @Transactional
     fun createMatching(matching: Matching): Matching {

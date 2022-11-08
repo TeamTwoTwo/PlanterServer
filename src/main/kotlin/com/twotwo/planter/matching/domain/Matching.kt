@@ -1,13 +1,9 @@
 package com.twotwo.planter.matching.domain
 
 import com.twotwo.planter.manager.domain.PlantManager
-import com.twotwo.planter.message.domain.MessageImg
-import com.twotwo.planter.message.domain.MessageStatus
-import com.twotwo.planter.message.domain.SenderType
+import com.twotwo.planter.review.domain.Review
 import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseTime
-import org.hibernate.annotations.ColumnDefault
-import org.hibernate.annotations.DynamicInsert
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -42,4 +38,7 @@ class Matching(status: MatchingStatus, startDate: LocalDate, endDate: LocalDate,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plant_manager_id")
     var plantManager: PlantManager = plantManager
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "matching")
+    var review: Review? = null
 }

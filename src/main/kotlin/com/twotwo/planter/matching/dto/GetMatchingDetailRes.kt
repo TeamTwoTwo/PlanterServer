@@ -13,5 +13,6 @@ data class GetMatchingDetailRes (
     val startDate: String,
     val endDate: String,
     val totalDate: Long,
-    val pickupType: Int
+    val pickupType: Int,
+    val reviewId: Long?
         )
