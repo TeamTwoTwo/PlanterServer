@@ -54,14 +54,14 @@ class MatchingService(private val matchingRepository: MatchingRepository) {
         return matching
     }
 
-    /*
+
     @Transactional
     fun createMatching(matching: Matching): Matching {
         val insertedMatching = matchingRepository.save(matching)
         return insertedMatching
     }
 
-    @Transactional
+    /*@Transactional
     fun updateMatchingStatusToDelete(userId: Long, plantManagerId: Long): Int {
         matchingRepository.updateStatus(userId, plantManagerId)
         return 1

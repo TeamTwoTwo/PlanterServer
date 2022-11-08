@@ -3,10 +3,7 @@ package com.twotwo.planter.matching.controller
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.manager.util.PlantManagerUtil
 import com.twotwo.planter.matching.domain.MatchingStatus
-import com.twotwo.planter.matching.dto.GetMatchingDetailRes
-import com.twotwo.planter.matching.dto.GetMatchingListRes
-import com.twotwo.planter.matching.dto.ModifyMatchingStatus
-import com.twotwo.planter.matching.dto.PlantServiceRes
+import com.twotwo.planter.matching.dto.*
 import com.twotwo.planter.matching.service.MatchingService
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseException
@@ -70,10 +67,11 @@ class MatchingController(private val matchingService: MatchingService, private v
     }
 
     /*@PostMapping("/matchings")
-    fun sendMatching(authentication: Authentication, @RequestBody sendMatchingReq: SendMatchingReq): BaseResponse<Any> {
+    fun createMatching(authentication: Authentication, @RequestBody createMatchingReq: CreateMatchingReq): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
-        val plantManager = plantManagerService.getPlantManager(sendMatchingReq.plantManagerId)
+
+        val plantManager = plantManagerService.createMatching(sendMatchingReq.plantManagerId)
 
         val matching = matchingService.createMatching(
             Matching(

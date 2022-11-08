@@ -5,6 +5,7 @@ import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
 import com.twotwo.planter.manager.dto.CreatePlantManagerReq
 import com.twotwo.planter.manager.dto.GetPlantManagerListRes
+import com.twotwo.planter.manager.dto.GetPlantManagerOptionRes
 import com.twotwo.planter.manager.dto.GetPlantManagerRes
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.user.service.UserService
@@ -52,10 +53,9 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
     }
 
     @GetMapping("/{plantManagerId}")
-    fun getPlantManager(@PathVariable plantManagerId: Long): BaseResponse<GetPlantManagerRes> {
-        //val userDetails: UserDetails = authentication.principal as UserDetails
-        //println(userDetails.username)
-        //val user = authService.findUser(userDetails.username)
+    fun getPlantManager(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<GetPlantManagerRes> {
+        val userDetails: UserDetails = authentication.principal as UserDetails
+        val user = userService.findUser(userDetails.username)
 
         val plantManager: PlantManager = plantManagerService.getPlantManager(plantManagerId)
         val images = arrayListOf<String>("https://baris-bucket.s3.ap-northeast-2.amazonaws.com/images.jpeg", "https://baris-bucket.s3.ap-northeast-2.amazonaws.com/images.jpeg")
@@ -84,5 +84,21 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
         plantManagerService.createPlantManagerList(plantManager)
 
         return BaseResponse(BaseResponseCode.SUCCESS)
+    }
+
+    @GetMapping("/{plantManagerId}/option")
+    fun getPlantManagerCareOption(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<List<GetPlantManagerOptionRes>> {
+        val userDetails: UserDetails = authentication.principal as UserDetails
+        val user = userService.findUser(userDetails.username)
+
+        val response = arrayListOf<GetPlantManagerOptionRes>()
+        val plantCares = plantManagerService.getPlantCareOption(plantManagerId)
+        if(plantCares !== null){
+            for(item in plantCares){
+                response.add(GetPlantManagerOptionRes(item!!.id!!, item!!.name, item!!.price))
+            }
+        }
+
+        return BaseResponse(response)
     }
 }

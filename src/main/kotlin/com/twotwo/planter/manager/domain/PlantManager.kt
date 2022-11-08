@@ -28,9 +28,9 @@ class PlantManager(name: String, profileImg: String, description: String, caring
     @Enumerated(EnumType.STRING)
     var category: PlantManagerCategory = category
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plantManager")
+    @OneToMany(mappedBy = "plantManager")
     var images: List<ManagerImg?>? = ArrayList<ManagerImg>()
 
-    @OneToMany(mappedBy = "plantManager")
-    var plantCares: List<PlantCareOption>? = ArrayList<PlantCareOption>()
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plantManager")
+    var plantCares: List<PlantCareOption?>? = ArrayList<PlantCareOption>()
 }

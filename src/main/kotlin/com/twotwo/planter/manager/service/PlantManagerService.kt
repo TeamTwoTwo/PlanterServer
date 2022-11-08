@@ -1,5 +1,6 @@
 package com.twotwo.planter.manager.service
 
+import com.twotwo.planter.manager.domain.PlantCareOption
 import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
 import com.twotwo.planter.manager.repository.PlantManagerRepository
@@ -29,5 +30,11 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
         plantManager: PlantManager
     ) {
         plantManagerepository.save(plantManager)
+    }
+
+    fun getPlantCareOption(plantManagerId: Long): List<PlantCareOption?>? {
+        val plantManager = this.getPlantManager(plantManagerId)
+
+        return plantManager.plantCares
     }
 }
