@@ -3,6 +3,7 @@ package com.twotwo.planter.matching.controller
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.manager.util.PlantManagerUtil
 import com.twotwo.planter.matching.domain.MatchingStatus
+import com.twotwo.planter.matching.domain.PickUpType
 import com.twotwo.planter.matching.dto.*
 import com.twotwo.planter.matching.service.MatchingService
 import com.twotwo.planter.user.service.UserService
@@ -53,62 +54,54 @@ class MatchingController(private val matchingService: MatchingService, private v
         val service = arrayListOf<PlantServiceRes>()
         var totalPrice = 0
         for(plant in matching.plants){
-            service.add(PlantServiceRes(plant.name, plant.count, plant.plantCareOption.price, plant.plantCareOption.name))
-            totalPrice += plant.plantCareOption.price * plant.count
+            service.add(PlantServiceRes(plant.name, plant.count, plant.plantServiceOption[0].plantCareOption.price, plant.plantServiceOption[0].plantCareOption.name))
+            totalPrice += plant.plantServiceOption[0].plantCareOption.price * plant.count
         }
         val response = GetMatchingDetailRes(matching.id!!, matching.plantManager.id!!, matching.plantManager.profileImg, matching.plantManager.name,
             plantManagerUtil.getCategoryInt(matching.plantManager.category),
             matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), matching.status.toString().lowercase(),
             service, totalPrice, matching.startDate.format(DateTimeFormatter.ofPattern("MM.dd")), matching.endDate.format(DateTimeFormatter.ofPattern("MM.dd")),
-            ChronoUnit.DAYS.between(matching.startDate, matching.endDate), matching.pickUpType.ordinal, 1
+            ChronoUnit.DAYS.between(matching.startDate, matching.endDate) + 1, matching.pickUpType.ordinal, matching.review?.id
             )
 
         return BaseResponse(response)
     }
 
-    /*@PostMapping("/matchings")
-    fun createMatching(authentication: Authentication, @RequestBody createMatchingReq: CreateMatchingReq): BaseResponse<Any> {
+    @PostMapping("/matchings")
+    fun createMatching(authentication: Authentication, @Valid @RequestBody createMatchingReq: CreateMatchingReq): BaseResponse<CreateMatchingRes> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val plantManager = plantManagerService.createMatching(sendMatchingReq.plantManagerId)
+        var pickUpType = PickUpType.USER_GO
+
+        if(createMatchingReq.pickUpType == 1){
+            pickUpType = PickUpType.PLANTMANAGER_GO
+        }
 
         val matching = matchingService.createMatching(
-            Matching(
-                sendMatchingReq.contents,
-                MatchingStatus.ACTIVE,
-                false,
-                SenderType.USER,
-                user,
-                plantManager
-            )
+            user, createMatchingReq.plantManagerId, createMatchingReq.startDate, createMatchingReq.endDate, pickUpType, arrayListOf()
         )
-        if (sendMatchingReq.images !== null) {
-            for (image in sendMatchingReq.images) {
-                matchingImgService.createMatchingImg(MatchingImg(image, matching))
-            }
-        }
-        val response = SendMatchingRes(matching.id!!)
+        matchingService.createPlantService(createMatchingReq.service, matching)
 
-        return BaseResponse(response)
-    }*/
+        return BaseResponse(CreateMatchingRes(matching.id!!))
+    }
 
     @PatchMapping("/matchings/{matchingId}")
-    fun modifyMatchingStatus(authentication: Authentication, @PathVariable matchingId: Long, @Valid @RequestBody modifyMatchingStatus: ModifyMatchingStatus): BaseResponse<Any> {
+    fun modifyMatchingStatus(authentication: Authentication, @PathVariable matchingId: Long, @Valid @RequestBody modifyMatchingStatusReq: ModifyMatchingStatusReq): BaseResponse<ModifyMatchingStatusRes> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        if(modifyMatchingStatus.status != "cancel" && modifyMatchingStatus.status != "complete"){
+        if(modifyMatchingStatusReq.status != "cancel" && modifyMatchingStatusReq.status != "complete"){
             throw BaseException(MATCHING_STATUS_INVALID)
         }
 
         var status = MatchingStatus.CANCEL
-        if(modifyMatchingStatus.status == "complete") {
+        if(modifyMatchingStatusReq.status == "complete") {
             status = MatchingStatus.COMPLETE
         }
 
-        matchingService.updateMatchingStatus(user.id!!, matchingId, status)
+        val matching = matchingService.updateMatchingStatus(user.id!!, matchingId, status)
 
-        return BaseResponse(SUCCESS)
+        return BaseResponse(ModifyMatchingStatusRes(matching.id!!, matching.status.toString().lowercase()))
     }
 }

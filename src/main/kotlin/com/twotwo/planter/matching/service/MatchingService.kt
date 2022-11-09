@@ -1,16 +1,23 @@
 package com.twotwo.planter.matching.service
 
-import com.twotwo.planter.matching.domain.Matching
-import com.twotwo.planter.matching.domain.MatchingStatus
+import com.twotwo.planter.manager.repository.PlantCareOptionRepository
+import com.twotwo.planter.manager.service.PlantManagerService
+import com.twotwo.planter.matching.domain.*
+import com.twotwo.planter.matching.dto.PlantToCare
 import com.twotwo.planter.matching.repository.MatchingRepository
+import com.twotwo.planter.matching.repository.PlantServiceOptionRepository
+import com.twotwo.planter.matching.repository.PlantServiceRepository
+import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponseCode.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 @Transactional(readOnly = true)
-class MatchingService(private val matchingRepository: MatchingRepository) {
+class MatchingService(private val matchingRepository: MatchingRepository, private val plantManagerService: PlantManagerService, private val plantServiceRepository: PlantServiceRepository, private val plantCareOptionRepository: PlantCareOptionRepository, private val plantServiceOptionRepository: PlantServiceOptionRepository) {
     fun getMatchingList(userId: Long): List<Matching> {
         return matchingRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
     }
@@ -24,10 +31,10 @@ class MatchingService(private val matchingRepository: MatchingRepository) {
     }
 
     @Transactional
-    fun updateMatchingStatus(userId: Long, matchingId: Long, status: MatchingStatus): Int {
+    fun updateMatchingStatus(userId: Long, matchingId: Long, status: MatchingStatus): Matching {
         val matching = matchingRepository.findMatchingById(matchingId)
 
-        if(matching == null){
+        if(matching === null){
             throw BaseException(MATCHING_NOT_FOUND)
         }
         if(matching.user.id != userId){
@@ -41,8 +48,8 @@ class MatchingService(private val matchingRepository: MatchingRepository) {
         }
 
         matching.status = status
-        matchingRepository.save(matching)
-        return 1
+        val modifiedMatching = matchingRepository.save(matching)
+        return modifiedMatching
     }
 
     fun getMatchingById(matchingId: Long): Matching {
@@ -56,9 +63,25 @@ class MatchingService(private val matchingRepository: MatchingRepository) {
 
 
     @Transactional
-    fun createMatching(matching: Matching): Matching {
+    fun createMatching(user: User, plantManagerId: Long, startDate: LocalDate, endDate: LocalDate, pickUpType: PickUpType, plants: List<PlantToCare>): Matching {
+        val plantManager = plantManagerService.getPlantManager(plantManagerId)
+        val matching = Matching(MatchingStatus.REQUEST, startDate, endDate, pickUpType, user, plantManager)
+
         val insertedMatching = matchingRepository.save(matching)
         return insertedMatching
+    }
+
+    @Transactional
+    fun createPlantService(plants: List<PlantToCare>, matching: Matching): Int {
+        for(plant in plants){
+            val plantCareOption = plantCareOptionRepository.findPlantCareOptionById(plant.optionId)
+            if(plantCareOption === null){
+                throw BaseException(PLANT_CARE_OPTION_NOT_FOUND)
+            }
+            val plantService = plantServiceRepository.save(PlantService(plant.plantName, plant.plantCount, matching))
+            val plantServiceOption = plantServiceOptionRepository.save(PlantServiceOption(plantService, plantCareOption))
+        }
+        return 1
     }
 
     /*@Transactional

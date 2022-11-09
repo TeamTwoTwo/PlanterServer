@@ -12,10 +12,6 @@ import com.twotwo.planter.message.dto.SendMessageReq
 import com.twotwo.planter.message.dto.SendMessageRes
 import com.twotwo.planter.message.service.MessageImgService
 import com.twotwo.planter.message.service.MessageService
-import com.twotwo.planter.review.domain.Review
-import com.twotwo.planter.review.domain.ReviewImg
-import com.twotwo.planter.review.dto.WriteReviewReq
-import com.twotwo.planter.review.dto.WriteReviewRes
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode

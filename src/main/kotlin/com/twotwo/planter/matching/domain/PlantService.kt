@@ -5,7 +5,7 @@ import com.twotwo.planter.util.BaseTime
 import javax.persistence.*
 
 @Entity
-class PlantService(name: String, count: Int, matching: Matching, plantCareOption: PlantCareOption): BaseTime() {
+class PlantService(name: String, count: Int, matching: Matching): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plant_id")
@@ -21,7 +21,6 @@ class PlantService(name: String, count: Int, matching: Matching, plantCareOption
     @JoinColumn(name = "matching_id")
     var matching: Matching = matching
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "plant_care_option_id")
-    var plantCareOption: PlantCareOption = plantCareOption
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plantService")
+    var plantServiceOption: List<PlantServiceOption> = arrayListOf()
 }
