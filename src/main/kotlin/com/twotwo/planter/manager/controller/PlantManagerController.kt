@@ -15,6 +15,7 @@ import com.twotwo.planter.util.BaseResponseCode
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
+import kotlin.math.min
 
 @RestController
 @RequestMapping("/plant-managers")
@@ -24,9 +25,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
     @GetMapping("")
     fun getPlantManagerList(authentication: Authentication, @RequestParam(required = false, defaultValue = "0") category: List<Int>,
                             @RequestParam(required = false, defaultValue = "0") sort: Int,
-                            @RequestParam(required = false, defaultValue = "false") isPhoto: Boolean,
-                            @RequestParam(required = false, defaultValue = "0") latitude: Double,
-                            @RequestParam(required = false, defaultValue = "0") longitude: Double): BaseResponse<Any> {
+                            @RequestParam(required = false, defaultValue = "false") isPhoto: Boolean): BaseResponse<Any> {
 
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
@@ -42,14 +41,9 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
             throw BaseException(BaseResponseCode.SORT_VALUE_INVALID)
         }
 
-        val plantMangers: List<PlantManager> = plantManagerService.getPlantManagerList(categoryList, sort, isPhoto, latitude, longitude)
-        val response = arrayListOf<GetPlantManagerListRes>()
+        val plantMangers: List<GetPlantManagerListRes?> = plantManagerService.getPlantManagerList(categoryList, sort, isPhoto, user.latitude!!, user.longitude!!)
 
-        for(item in plantMangers){
-            response.add(GetPlantManagerListRes(item.id!!, item.name, categoryEnumList.indexOf(item.category), item.profileImg, 11.1, item.isPhoto, 4.5, item.description, item.caringPrice))
-        }
-
-        return BaseResponse(response)
+        return BaseResponse(plantMangers)
     }
 
     @GetMapping("/{plantManagerId}")

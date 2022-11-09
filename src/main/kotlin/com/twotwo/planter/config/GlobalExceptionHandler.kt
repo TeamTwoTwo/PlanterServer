@@ -3,6 +3,9 @@ package com.twotwo.planter.config
 import com.twotwo.planter.common.dto.ErrorResponse
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
+import lombok.extern.slf4j.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,9 +17,11 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import javax.lang.model.type.NullType
 
-
+@Slf4j
 @RestControllerAdvice
 class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
+    val log: Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+
     @ExceptionHandler(BaseException::class)
     protected fun handleBaseException(e: BaseException): ResponseEntity<Any> {
         return ResponseEntity.status(e.baseResponseCode.status)
@@ -50,6 +55,8 @@ class GlobalExceptionHandler: ResponseEntityExceptionHandler() {
         errorResponseDto = if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
             ErrorResponse(false, 5001, "Internal Server Error")
         } else if(status == HttpStatus.BAD_REQUEST) {
+            log.warn("Bad Request: " + ex.message)
+            log.warn("Bad Request: " + ex.stackTrace)
             ErrorResponse(false, 4000, "Bad Request")
         } else {
             ErrorResponse(false, status.value(), ex.message!!)

@@ -1,7 +1,5 @@
 package com.twotwo.planter.manager.dto
 
-import com.twotwo.planter.manager.domain.PlantManagerCategory
-
 data class GetPlantManagerListRes (
     val id: Long,
     val name: String,
