@@ -22,7 +22,7 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     MATCHING_USER_NOT_MATCH(false, 3010, HttpStatus.OK, "매칭 요청한 사용자와 일치하지 않는 사용자입니다"),
     REVIEW_ALREADY_EXIST(false, 3011, HttpStatus.OK, "이미 리뷰를 작성한 매칭입니다"),
     PLANT_CARE_OPTION_NOT_FOUND(false, 3012, HttpStatus.OK, "존재하지 않는 케어 옵션입니다"),
-    //3013
+    USER_ID_NOT_MATCH(false, 3013, HttpStatus.OK, "로그인 사용자와 userId가 일치하지 않습니다"),
 
     AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요"),
     FILE_UPLOAD_FAIL(false, 4002, HttpStatus.OK, "파일업로드에 실패했습니다");
