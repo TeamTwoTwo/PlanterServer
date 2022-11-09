@@ -59,7 +59,7 @@ class ReviewController(private val reviewService: ReviewService, private val rev
             }
         }
 
-        val response = WriteReviewRes(review.id!!)
+        val response = WriteReviewRes(review.id!!, review.matching.plantManager.id!!)
 
         return BaseResponse(response)
     }
