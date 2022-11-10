@@ -9,6 +9,8 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     CATEGORY_VALUE_INVALID(false, 2007, HttpStatus.OK, "식물 관리자 카테고리 값이 잘못되었습니다"),
     SORT_VALUE_INVALID(false, 2008, HttpStatus.OK, "식물 관리자 정렬 값이 잘못되었습니다"),
     MATCHING_STATUS_INVALID(false, 2009, HttpStatus.OK, "매칭 상태 입력값은 cancel 또는 complete 여야합니다"),
+    //2010
+    REPORT_REQUEST_VALUE_EMPTY(false, 2011, HttpStatus.OK, "신고할 리뷰, 쪽지, 전문가를 입력해주세요"),
 
     DUPLICATE_EMAIL(false, 3001, HttpStatus.OK, "중복된 이메일입니다"),
     INVALID_CODE(false, 3002, HttpStatus.OK, "인증번호가 일치하지 않습니다"),
@@ -23,6 +25,9 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     REVIEW_ALREADY_EXIST(false, 3011, HttpStatus.OK, "이미 리뷰를 작성한 매칭입니다"),
     PLANT_CARE_OPTION_NOT_FOUND(false, 3012, HttpStatus.OK, "존재하지 않는 케어 옵션입니다"),
     USER_ID_NOT_MATCH(false, 3013, HttpStatus.OK, "로그인 사용자와 userId가 일치하지 않습니다"),
+    USER_ALREADY_DELETED(false, 3014, HttpStatus.OK, "이미 탈퇴된 사용자 입니다"),
+    REVIEW_NOT_FOUND(false, 3015, HttpStatus.OK, "존재하지 않는 리뷰입니다"),
+
 
     AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요"),
     FILE_UPLOAD_FAIL(false, 4002, HttpStatus.OK, "파일업로드에 실패했습니다");

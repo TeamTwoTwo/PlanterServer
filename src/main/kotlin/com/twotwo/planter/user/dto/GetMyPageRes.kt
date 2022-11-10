@@ -5,4 +5,7 @@ data class GetMyPageRes (
     val name: String,
     val profileImg: String?,
     val email: String,
+    val category: Int,
+    val address: String,
+    val detailAddress: String?,
         )

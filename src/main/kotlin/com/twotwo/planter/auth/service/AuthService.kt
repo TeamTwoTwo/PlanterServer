@@ -6,6 +6,7 @@ import com.twotwo.planter.auth.dto.UserRegisterReq
 import com.twotwo.planter.auth.dto.UserRegisterRes
 import com.twotwo.planter.auth.dto.VerifyCodeReq
 import com.twotwo.planter.user.domain.User
+import com.twotwo.planter.user.domain.UserStatus
 import com.twotwo.planter.user.repository.UserRepository
 import com.twotwo.planter.user.service.UserService
 import org.springframework.stereotype.Service
@@ -31,7 +32,7 @@ class AuthService(private val userRepository: UserRepository, private val userSe
     }
 
     fun createUser(userRegisterReq: UserRegisterReq): UserRegisterRes {
-        val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone, userRegisterReq.address, userRegisterReq.detailAddress, userRegisterReq.latitude, userRegisterReq.longitude, null)
+        val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone, userRegisterReq.address, userRegisterReq.detailAddress, userRegisterReq.latitude, userRegisterReq.longitude, null, UserStatus.ACTIVE)
         val createdUser = userRepository.save(user)
         val token = jwtTokenProvider.createToken(createdUser.id!!)
 

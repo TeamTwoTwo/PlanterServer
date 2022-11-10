@@ -74,12 +74,16 @@ class MatchingService(private val matchingRepository: MatchingRepository, privat
     @Transactional
     fun createPlantService(plants: List<PlantToCare>, matching: Matching): Int {
         for(plant in plants){
-            val plantCareOption = plantCareOptionRepository.findPlantCareOptionById(plant.optionId)
-            if(plantCareOption === null){
-                throw BaseException(PLANT_CARE_OPTION_NOT_FOUND)
+            val plantService = plantServiceRepository.save(PlantService(plant.plantName, 1, matching))
+            for(option in plant.optionId) {
+                if(option !== null){
+                    val plantCareOption = plantCareOptionRepository.findPlantCareOptionById(option)
+                    if(plantCareOption === null){
+                        throw BaseException(PLANT_CARE_OPTION_NOT_FOUND)
+                    }
+                    val plantServiceOption = plantServiceOptionRepository.save(PlantServiceOption(plantService, plantCareOption))
+                }
             }
-            val plantService = plantServiceRepository.save(PlantService(plant.plantName, plant.plantCount, matching))
-            val plantServiceOption = plantServiceOptionRepository.save(PlantServiceOption(plantService, plantCareOption))
         }
         return 1
     }

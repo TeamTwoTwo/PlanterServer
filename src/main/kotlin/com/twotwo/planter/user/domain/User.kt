@@ -10,7 +10,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "UserInfo")
-class User(name: String, email: String, password: String, birth: String, phone: String, address: String, detailAddress: String?, latitude: Double?, longitude: Double?, profileImg: String?): BaseTime(), UserDetails {
+class User(name: String, email: String, password: String, birth: String, phone: String, address: String, detailAddress: String?, latitude: Double?, longitude: Double?, profileImg: String?, status: UserStatus): BaseTime(), UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -45,6 +45,10 @@ class User(name: String, email: String, password: String, birth: String, phone: 
 
     @Column
     var profileImg: String? = profileImg
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    var status: UserStatus = status
 
     @OneToMany(mappedBy = "user")
     var messages: List<Message> = ArrayList<Message>()
