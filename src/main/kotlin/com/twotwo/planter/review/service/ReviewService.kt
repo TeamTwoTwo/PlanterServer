@@ -19,7 +19,7 @@ class ReviewService(private val reviewRepository: ReviewRepository, private val 
         return insertedReview
     }
 
-    fun getReviewById(reviewId: Long): Review? {
+    fun getReviewById(reviewId: Long): Review {
         val review = reviewRepository.findReviewById(reviewId)
 
         if(review == null){

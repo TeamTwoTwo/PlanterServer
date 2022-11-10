@@ -13,10 +13,10 @@ import javax.persistence.*
 class Report(user: User, review: Review?, message: Message?, plantManager: PlantManager?): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
+    @Column(name = "report_id")
     var id: Long? = null
 
-    /*@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     var user: User = user
 
@@ -30,5 +30,5 @@ class Report(user: User, review: Review?, message: Message?, plantManager: Plant
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plant_manager_id")
-    var plantManager: PlantManager? = plantManager*/
+    var plantManager: PlantManager? = plantManager
 }

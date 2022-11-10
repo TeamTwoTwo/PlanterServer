@@ -1,6 +1,7 @@
 package com.twotwo.planter.report.controller
 
 import com.twotwo.planter.report.dto.CreateReportReq
+import com.twotwo.planter.report.dto.CreateReportRes
 import com.twotwo.planter.report.service.ReportService
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseException
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/reports")
 class ReportController(private val reportService: ReportService, private val userService: UserService){
     @PostMapping("")
-    fun getMessageList(authentication: Authentication, @RequestBody createReportReq: CreateReportReq): BaseResponse<Any> {
+    fun getMessageList(authentication: Authentication, @RequestBody createReportReq: CreateReportReq): BaseResponse<CreateReportRes> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
@@ -26,9 +27,8 @@ class ReportController(private val reportService: ReportService, private val use
             throw BaseException(REPORT_REQUEST_VALUE_EMPTY)
         }
 
-        reportService.createReport(user, createReportReq.reviewId, createReportReq.messageId, createReportReq.plantManagerId)
+        val reportId = reportService.createReport(user, createReportReq.reviewId, createReportReq.messageId, createReportReq.plantManagerId)
 
-        return BaseResponse(SUCCESS)
+        return BaseResponse(CreateReportRes(reportId))
     }
-
 }

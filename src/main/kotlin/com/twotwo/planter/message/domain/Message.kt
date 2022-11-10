@@ -1,6 +1,7 @@
 package com.twotwo.planter.message.domain
 
 import com.twotwo.planter.manager.domain.PlantManager
+import com.twotwo.planter.report.domain.Report
 import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseTime
 import org.hibernate.annotations.ColumnDefault
@@ -41,4 +42,7 @@ class Message(contents: String, status: MessageStatus, isRead: Boolean, sender: 
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "message")
     var images: List<MessageImg?>? = ArrayList<MessageImg>()
+
+    @OneToMany(mappedBy = "message")
+    var reports: List<Report?>? = ArrayList<Report>()
 }

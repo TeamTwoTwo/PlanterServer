@@ -24,4 +24,5 @@ interface MessageRepository: JpaRepository<Message, Long> {
     @Modifying
     @Query(value = "UPDATE message SET status = 'DELETED' WHERE user_id = :userId AND plant_manager_id = :plantManagerId", nativeQuery = true)
     fun updateStatus(userId: Long, plantManagerId: Long): Any
+    fun findMessageById(messageId: Long): Message?
 }

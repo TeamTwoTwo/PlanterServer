@@ -27,6 +27,7 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     USER_ID_NOT_MATCH(false, 3013, HttpStatus.OK, "로그인 사용자와 userId가 일치하지 않습니다"),
     USER_ALREADY_DELETED(false, 3014, HttpStatus.OK, "이미 탈퇴된 사용자 입니다"),
     REVIEW_NOT_FOUND(false, 3015, HttpStatus.OK, "존재하지 않는 리뷰입니다"),
+    MESSAGE_NOT_FOUND(false, 3016, HttpStatus.OK, "존재하지 않는 쪽지입니다"),
 
 
     AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요"),

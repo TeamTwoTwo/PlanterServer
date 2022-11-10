@@ -3,6 +3,7 @@ package com.twotwo.planter.manager.controller
 import com.twotwo.planter.auth.service.AuthService
 import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
+import com.twotwo.planter.manager.domain.PlantManagerStatus
 import com.twotwo.planter.manager.dto.CreatePlantManagerReq
 import com.twotwo.planter.manager.dto.GetPlantManagerListRes
 import com.twotwo.planter.manager.dto.GetPlantManagerOptionRes
@@ -73,7 +74,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
         val plantManager = PlantManager(createPlantManagerReq.name, createPlantManagerReq.profileImg, createPlantManagerReq.description,
             createPlantManagerReq.caringPrice, createPlantManagerReq.pruningPrice,
             createPlantManagerReq.address, createPlantManagerReq.latitude, createPlantManagerReq.longitude,
-            createPlantManagerReq.is_photo, createPlantManagerReq.category, createPlantManagerReq.introduction)
+            createPlantManagerReq.is_photo, createPlantManagerReq.category, createPlantManagerReq.introduction, PlantManagerStatus.ACTIVE)
 
         plantManagerService.createPlantManagerList(plantManager)
 
