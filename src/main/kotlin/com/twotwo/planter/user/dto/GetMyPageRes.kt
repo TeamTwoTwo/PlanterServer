@@ -8,4 +8,5 @@ data class GetMyPageRes (
     val category: Int,
     val address: String,
     val detailAddress: String?,
+    val phone: String?,
         )

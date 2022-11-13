@@ -2,7 +2,10 @@ package com.twotwo.planter.matching.service
 
 import com.twotwo.planter.manager.repository.PlantCareOptionRepository
 import com.twotwo.planter.manager.service.PlantManagerService
+import com.twotwo.planter.manager.util.PlantManagerUtil
 import com.twotwo.planter.matching.domain.*
+import com.twotwo.planter.matching.dto.GetMatchingDetailRes
+import com.twotwo.planter.matching.dto.PlantServiceRes
 import com.twotwo.planter.matching.dto.PlantToCare
 import com.twotwo.planter.matching.repository.MatchingRepository
 import com.twotwo.planter.matching.repository.PlantServiceOptionRepository
@@ -14,20 +17,35 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Service
 @Transactional(readOnly = true)
-class MatchingService(private val matchingRepository: MatchingRepository, private val plantManagerService: PlantManagerService, private val plantServiceRepository: PlantServiceRepository, private val plantCareOptionRepository: PlantCareOptionRepository, private val plantServiceOptionRepository: PlantServiceOptionRepository) {
+class MatchingService(private val matchingRepository: MatchingRepository, private val plantManagerService: PlantManagerService, private val plantServiceRepository: PlantServiceRepository, private val plantCareOptionRepository: PlantCareOptionRepository, private val plantServiceOptionRepository: PlantServiceOptionRepository, private val plantManagerUtil: PlantManagerUtil) {
     fun getMatchingList(userId: Long): List<Matching> {
         return matchingRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
     }
 
-    fun getMatchingDetail(matchingId: Long): Matching {
+    fun getMatchingDetail(matchingId: Long): Any {
         val matching = matchingRepository.findMatchingById(matchingId)
         if(matching == null){
             throw BaseException(MATCHING_NOT_FOUND)
         }
-        return matching
+        val service = arrayListOf<PlantServiceRes>()
+        var totalPrice = 0
+
+        for(plant in matching.plants){
+            service.add(PlantServiceRes(plant.name, plant.count, plant.plantServiceOption[0].plantCareOption.price, plant.plantServiceOption[0].plantCareOption.name))
+            totalPrice += plant.plantServiceOption[0].plantCareOption.price * plant.count
+        }
+
+        val response = GetMatchingDetailRes(matching.id!!, matching.plantManager.id!!, matching.plantManager.profileImg, matching.plantManager.name,
+            plantManagerUtil.getCategoryInt(matching.plantManager.category),
+            matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), matching.status.toString().lowercase(),
+            service, totalPrice, matching.startDate.format(DateTimeFormatter.ofPattern("MM.dd")), matching.endDate.format(DateTimeFormatter.ofPattern("MM.dd")),
+            ChronoUnit.DAYS.between(matching.startDate, matching.endDate) + 1, matching.pickUpType.ordinal, matching.review?.id
+        )
+        return response
     }
 
     @Transactional

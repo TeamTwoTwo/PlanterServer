@@ -12,7 +12,7 @@ class ReviewImg(imageUrl: String, review: Review): BaseTime() {
 
     var imageUrl: String = imageUrl
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     var review: Review = review
 }

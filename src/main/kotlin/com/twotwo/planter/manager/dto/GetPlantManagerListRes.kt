@@ -4,7 +4,7 @@ data class GetPlantManagerListRes (
     val id: Long,
     val name: String,
     val category: Int,
-    val profileImg: String,
+    val profileImg: String?,
     val distance: Double,
     val isPhoto: Boolean,
     val rate: Double,

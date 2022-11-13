@@ -23,19 +23,7 @@ import java.time.format.DateTimeFormatter
 class ReviewController(private val reviewService: ReviewService, private val reviewImgService: ReviewImgService, private val userService: UserService, private val matchingService: MatchingService, private val awsS3Service: AwsS3Service) {
     @GetMapping("/plant-managers/{plantManagerId}/reviews")
     fun getReviewList(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<Any> {
-        val reviews = reviewService.getReviewList(plantManagerId)
-        val response = arrayListOf<GetReviewListRes>()
-
-        for(review in reviews){
-            val images = arrayListOf<String>()
-            if(review.images !== null){
-                for(image in review.images!!){
-                    images.add(image!!.imageUrl)
-                }
-            }
-            response.add(GetReviewListRes(review.id!!, review.matching.user.profileImg, review.matching.user.name, review.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-                review.rate, review.contents, images))
-        }
+        val response = reviewService.getReviewList(plantManagerId)
 
         return BaseResponse(response)
     }

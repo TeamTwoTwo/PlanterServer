@@ -28,7 +28,7 @@ class Matching(status: MatchingStatus, startDate: LocalDate, endDate: LocalDate,
     @Enumerated(EnumType.STRING)
     var pickUpType: PickUpType = pickUpType
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "matching", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "matching", cascade = [CascadeType.ALL])
     var plants: List<PlantService> = arrayListOf()
 
     @ManyToOne(fetch = FetchType.LAZY)

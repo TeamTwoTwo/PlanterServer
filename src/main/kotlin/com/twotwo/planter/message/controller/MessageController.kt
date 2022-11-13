@@ -28,21 +28,7 @@ class MessageController(private val messageService: MessageService, private val 
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val messages = messageService.getMessageList(user.id!!)
-        val response = arrayListOf<GetMessageGroupRes>()
-
-        for(message in messages){
-            val images = arrayListOf<String>()
-            if(message.images !== null){
-                for(image in message.images!!){
-                    images.add(image!!.imageUrl)
-                }
-            }
-            response.add(
-                GetMessageGroupRes(message.plantManager.id!!, message.plantManager.profileImg, message.plantManager.name, 0,
-               message.contents, message.createdAt!!.format(DateTimeFormatter.ofPattern("a hh:mm")), !message.isRead)
-            )
-        }
+        val response = messageService.getMessageList(user.id!!)
 
         return BaseResponse(response)
     }
@@ -52,21 +38,7 @@ class MessageController(private val messageService: MessageService, private val 
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val messages = messageService.getMessageDetail(user.id!!, plantManagerId)
-        val response = arrayListOf<GetMessageDetailRes>()
-
-        for(message in messages){
-            val images = arrayListOf<String>()
-            if(message.images !== null){
-                for(image in message.images!!){
-                    images.add(image!!.imageUrl)
-                }
-            }
-            response.add(
-                GetMessageDetailRes(message.id!!, message.sender === SenderType.USER,
-                    message.contents, images, message.createdAt!!.format(DateTimeFormatter.ofPattern("a hh:mm")))
-            )
-        }
+        val response = messageService.getMessageDetail(user.id!!, plantManagerId)
 
         return BaseResponse(response)
     }

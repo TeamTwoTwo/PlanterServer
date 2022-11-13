@@ -50,19 +50,7 @@ class MatchingController(private val matchingService: MatchingService, private v
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val matching = matchingService.getMatchingDetail(matchingId)
-        val service = arrayListOf<PlantServiceRes>()
-        var totalPrice = 0
-        for(plant in matching.plants){
-            service.add(PlantServiceRes(plant.name, plant.count, plant.plantServiceOption[0].plantCareOption.price, plant.plantServiceOption[0].plantCareOption.name))
-            totalPrice += plant.plantServiceOption[0].plantCareOption.price * plant.count
-        }
-        val response = GetMatchingDetailRes(matching.id!!, matching.plantManager.id!!, matching.plantManager.profileImg, matching.plantManager.name,
-            plantManagerUtil.getCategoryInt(matching.plantManager.category),
-            matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), matching.status.toString().lowercase(),
-            service, totalPrice, matching.startDate.format(DateTimeFormatter.ofPattern("MM.dd")), matching.endDate.format(DateTimeFormatter.ofPattern("MM.dd")),
-            ChronoUnit.DAYS.between(matching.startDate, matching.endDate) + 1, matching.pickUpType.ordinal, matching.review?.id
-            )
+        val response = matchingService.getMatchingDetail(matchingId)
 
         return BaseResponse(response)
     }

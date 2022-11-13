@@ -9,7 +9,6 @@ import org.hibernate.annotations.DynamicInsert
 import javax.persistence.*
 
 @Entity
-@DynamicInsert
 class Message(contents: String, status: MessageStatus, isRead: Boolean, sender: SenderType, user: User, plantManager: PlantManager): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,16 +18,13 @@ class Message(contents: String, status: MessageStatus, isRead: Boolean, sender: 
     var contents: String = contents
 
     @Column(nullable = false)
-    @ColumnDefault("ACTIVE")
     @Enumerated(EnumType.STRING)
     var status: MessageStatus = status
 
     @Column(nullable = false)
-    @ColumnDefault("false")
     var isRead: Boolean = isRead
 
     @Column(nullable = false)
-    @ColumnDefault("USER")
     @Enumerated(EnumType.STRING)
     var sender: SenderType = sender
 
@@ -40,7 +36,7 @@ class Message(contents: String, status: MessageStatus, isRead: Boolean, sender: 
     @JoinColumn(name = "plant_manager_id")
     var plantManager: PlantManager = plantManager
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "message")
+    @OneToMany(mappedBy = "message")
     var images: List<MessageImg?>? = ArrayList<MessageImg>()
 
     @OneToMany(mappedBy = "message")

@@ -21,6 +21,6 @@ class PlantService(name: String, count: Int, matching: Matching): BaseTime() {
     @JoinColumn(name = "matching_id")
     var matching: Matching = matching
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plantService")
+    @OneToMany(mappedBy = "plantService")
     var plantServiceOption: List<PlantServiceOption> = arrayListOf()
 }

@@ -61,9 +61,9 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
             }
         }*/
         val response = GetPlantManagerRes(plantManager.id!!, plantManager.name, categoryEnumList.indexOf(plantManager.category), plantManager.profileImg,
-            123.5, plantManager.isPhoto, 5.5, plantManager.description, plantManager.caringPrice, plantManager.pruningPrice,
+            1.1, plantManager.isPhoto, 3.5, plantManager.description, plantManager.caringPrice, plantManager.pruningPrice,
             images, plantManager.introduction, plantManager.address, plantManager.latitude, plantManager.longitude,
-            null, 12345)
+            null, 4)
 
         return BaseResponse(response)
     }
@@ -86,13 +86,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val response = arrayListOf<GetPlantManagerOptionRes>()
-        val plantCares = plantManagerService.getPlantCareOption(plantManagerId)
-        if(plantCares !== null){
-            for(item in plantCares){
-                response.add(GetPlantManagerOptionRes(item!!.id!!, item!!.name, item!!.price))
-            }
-        }
+        val response = plantManagerService.getPlantCareOption(plantManagerId)
 
         return BaseResponse(response)
     }

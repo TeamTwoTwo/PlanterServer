@@ -23,8 +23,18 @@ class UserController(private val userService: UserService) {
         if(user.id != userId){
             throw BaseException(USER_ID_NOT_MATCH)
         }
-
-        return BaseResponse(GetMyPageRes(user.id!!, user.name, user.profileImg, user.email, 0, user.address, user.detailAddress))
+        var phone = user.phone.substring(0, 3) + "-"
+        if(user.phone.length == 10){
+            phone += user.phone.substring(3, 6)
+            phone += "-"
+            phone += user.phone.substring(6, user.phone.length)
+        }
+        else {
+            phone += user.phone.substring(3, 7)
+            phone += "-"
+            phone += user.phone.substring(7, user.phone.length)
+        }
+        return BaseResponse(GetMyPageRes(user.id!!, user.name, user.profileImg, user.email, 0, user.address, user.detailAddress, phone))
     }
 
     @PatchMapping("/{userId}/withdrawal")

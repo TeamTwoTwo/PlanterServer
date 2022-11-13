@@ -12,7 +12,7 @@ class MessageImg(imageUrl: String, message: Message): BaseTime() {
 
     var imageUrl: String = imageUrl
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "message_id")
     var message: Message = message
 }

@@ -19,6 +19,6 @@ class Review(contents: String, rate: Double, matching: Matching): BaseTime() {
     @JoinColumn(name = "matching_id")
     var matching: Matching = matching
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "review")
+    @OneToMany(mappedBy = "review")
     var images: List<ReviewImg?>? = ArrayList<ReviewImg>()
 }

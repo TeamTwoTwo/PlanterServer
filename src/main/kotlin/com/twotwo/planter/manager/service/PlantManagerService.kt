@@ -5,6 +5,7 @@ import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
 import com.twotwo.planter.manager.domain.PlantManagerStatus
 import com.twotwo.planter.manager.dto.GetPlantManagerListRes
+import com.twotwo.planter.manager.dto.GetPlantManagerOptionRes
 import com.twotwo.planter.manager.repository.PlantManagerRepository
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponseCode.*
@@ -80,10 +81,17 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
         plantManagerepository.save(plantManager)
     }
 
-    fun getPlantCareOption(plantManagerId: Long): List<PlantCareOption?>? {
+    fun getPlantCareOption(plantManagerId: Long): List<GetPlantManagerOptionRes> {
         val plantManager = this.getPlantManager(plantManagerId)
 
-        return plantManager.plantCares
+        val response = arrayListOf<GetPlantManagerOptionRes>()
+
+        if(plantManager.plantCares !== null){
+            for(item in plantManager.plantCares!!){
+                response.add(GetPlantManagerOptionRes(item!!.id!!, item.name, item.price))
+            }
+        }
+        return response
     }
 
     @Transactional

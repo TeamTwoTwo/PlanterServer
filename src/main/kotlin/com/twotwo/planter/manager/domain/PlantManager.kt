@@ -6,7 +6,7 @@ import com.twotwo.planter.util.BaseTime
 import javax.persistence.*
 
 @Entity
-open class PlantManager(name: String, profileImg: String, description: String, caringPrice: Int, pruningPrice: Int, address: String, latitude: Double, longitude: Double, isPhoto: Boolean, category: PlantManagerCategory, introduction: String, status: PlantManagerStatus): BaseTime() {
+class PlantManager(name: String, profileImg: String, description: String, caringPrice: Int, pruningPrice: Int, address: String, latitude: Double, longitude: Double, isPhoto: Boolean, category: PlantManagerCategory, introduction: String, status: PlantManagerStatus): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plant_manager_id")
@@ -15,7 +15,7 @@ open class PlantManager(name: String, profileImg: String, description: String, c
     @Column(nullable = false)
     var name: String = name
 
-    var profileImg: String = profileImg
+    var profileImg: String? = profileImg
     var description: String = description
     var caringPrice: Int = caringPrice
     var pruningPrice: Int = pruningPrice
@@ -35,12 +35,11 @@ open class PlantManager(name: String, profileImg: String, description: String, c
     @OneToMany(mappedBy = "plantManager")
     var images: List<ManagerImg?>? = ArrayList<ManagerImg>()
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "plantManager")
+    @OneToMany(mappedBy = "plantManager")
     var plantCares: List<PlantCareOption?>? = ArrayList<PlantCareOption>()
 
     @OneToMany(mappedBy = "plantManager")
     var matchings: List<Matching?> = ArrayList<Matching>()
-
 
     @OneToMany(mappedBy = "plantManager")
     var reports: List<Report?>? = ArrayList<Report>()
