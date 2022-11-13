@@ -1,0 +1,30 @@
+spring:
+  web:
+    resources:
+      static-locations: META-INF:/resources, classpath:/resources, classpath:/static, classpath:/static/dist
+  # Database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://database.c32x1tfumqco.ap-northeast-2.rds.amazonaws.com:5432/planter_dev
+    platform: postgres
+    username: postgres
+    password: elqlpassword
+  # jpa properties
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+  # redis
+  redis:
+    host: localhost
+    port: 6379
+
+
+# secret
+jwt:
+  validate-time: 1800000
+  secretKey: 2q4L7bPjjLZY8iOj0S9oGACCQGbzMqRvvog
