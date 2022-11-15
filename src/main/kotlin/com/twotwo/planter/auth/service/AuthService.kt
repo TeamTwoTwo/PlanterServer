@@ -48,7 +48,14 @@ class AuthService(private val userRepository: UserRepository, private val userSe
     }
 
     fun sendCertificateCode(sendCodeReq: SendCodeReq): Int {
-        val certificateCode = (SecureRandom().nextInt(100000) % 100000).toString()
+        var certificateCode = (SecureRandom().nextInt(100000) % 100000).toString()
+        if(certificateCode.length < 5){
+            var len = 5-certificateCode.length
+            while(len > 0){
+                certificateCode = "0" + certificateCode
+                len--
+            }
+        }
 
         certificateCodeService.createSmsCertification(sendCodeReq.phone, certificateCode)
         smsService.sendSms(sendCodeReq.phone, "[플랜터] 인증번호 [" + certificateCode + "]를 입력해 주세요.")
