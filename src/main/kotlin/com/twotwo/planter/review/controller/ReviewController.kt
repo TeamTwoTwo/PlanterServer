@@ -13,6 +13,7 @@ import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode.*
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
@@ -22,8 +23,8 @@ import java.time.format.DateTimeFormatter
 @RequestMapping("")
 class ReviewController(private val reviewService: ReviewService, private val reviewImgService: ReviewImgService, private val userService: UserService, private val matchingService: MatchingService, private val awsS3Service: AwsS3Service) {
     @GetMapping("/plant-managers/{plantManagerId}/reviews")
-    fun getReviewList(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<Any> {
-        val response = reviewService.getReviewList(plantManagerId)
+    fun getReviewList(authentication: Authentication, @PathVariable plantManagerId: Long, @RequestParam("page", defaultValue = "0") page: Int?, @RequestParam("size", defaultValue = "50") size: Int?, pageable: Pageable): BaseResponse<Any> {
+        val response = reviewService.getReviewList(plantManagerId, page, size)
 
         return BaseResponse(response)
     }

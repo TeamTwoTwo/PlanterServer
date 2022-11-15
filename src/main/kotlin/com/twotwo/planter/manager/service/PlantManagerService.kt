@@ -16,9 +16,9 @@ import kotlin.math.min
 @Service
 @Transactional(readOnly = true)
 class PlantManagerService(private val plantManagerepository: PlantManagerRepository) {
-    fun getPlantManagerList(category: List<PlantManagerCategory>, sort: Int, isPhoto: Boolean, latitude: Double, longitude: Double): List<GetPlantManagerListRes?> {
+    fun getPlantManagerList(category: List<PlantManagerCategory>, sort: Int, isPhoto: Boolean, latitude: Double, longitude: Double, page: Int, size: Int): List<GetPlantManagerListRes?> {
         val categoryEnumList = arrayListOf(PlantManagerCategory.HOUSE, PlantManagerCategory.FLORIST, PlantManagerCategory.EXPERT, PlantManagerCategory.SERVICE)
-        val plantManagers = plantManagerepository.findPlantManagers(latitude, longitude, isPhoto)
+        val plantManagers = plantManagerepository.findPlantManagers(latitude, longitude, isPhoto, page, size)
 
         val response = arrayListOf<GetPlantManagerListRes?>()
         for (item in plantManagers) {

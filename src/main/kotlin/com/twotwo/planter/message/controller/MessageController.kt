@@ -15,6 +15,7 @@ import com.twotwo.planter.message.service.MessageService
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
@@ -24,21 +25,25 @@ import java.time.format.DateTimeFormatter
 @RequestMapping("")
 class MessageController(private val messageService: MessageService, private val messageImgService: MessageImgService, private val userService: UserService, private val plantManagerService: PlantManagerService, private val awsS3Service: AwsS3Service) {
     @GetMapping("/messages")
-    fun getMessageList(authentication: Authentication): BaseResponse<Any> {
+    fun getMessageList(authentication: Authentication,
+                       @RequestParam("page", defaultValue = "0") page: Int,
+                       @RequestParam("size", defaultValue = "50") size: Int, pageable: Pageable): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val response = messageService.getMessageList(user.id!!)
+        val response = messageService.getMessageList(user.id!!, page, size)
 
         return BaseResponse(response)
     }
 
     @GetMapping("/plant-managers/{plantManagerId}/messages")
-    fun getMessage(authentication: Authentication, @PathVariable plantManagerId: Long): BaseResponse<Any> {
+    fun getMessage(authentication: Authentication, @PathVariable plantManagerId: Long,
+                   @RequestParam("page", defaultValue = "0") page: Int,
+                   @RequestParam("size", defaultValue = "100") size: Int, pageable: Pageable): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val response = messageService.getMessageDetail(user.id!!, plantManagerId)
+        val response = messageService.getMessageDetail(user.id!!, plantManagerId, page, size)
 
         return BaseResponse(response)
     }

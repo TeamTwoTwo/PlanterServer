@@ -13,10 +13,10 @@ import java.time.format.DateTimeFormatter
 @Service
 @Transactional(readOnly = true)
 class ReviewService(private val reviewRepository: ReviewRepository, private val plantManagerService: PlantManagerService) {
-    fun getReviewList(plantManagerId: Long): Any {
+    fun getReviewList(plantManagerId: Long, page: Int?, size: Int?): Any {
         val plantManager = plantManagerService.getPlantManager(plantManagerId)
 
-        val reviews = reviewRepository.findAllByPlantManagerId(plantManagerId)
+        val reviews = reviewRepository.findAllByPlantManagerId(plantManagerId, page, size)
         val response = arrayListOf<GetReviewListRes>()
 
         for(review in reviews){

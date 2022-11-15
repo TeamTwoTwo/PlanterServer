@@ -18,6 +18,6 @@ interface PlantManagerRepository: JpaRepository<PlantManager, Long> {
             "          + sin ( radians(:longitude)) * sin( radians(latitude) )\n" +
             "       )\n" +
             "   )/1000 AS distance FROM plant_manager WHERE (NOT(:isPhoto) OR is_photo = true)\n" +
-            "ORDER BY distance", nativeQuery = true)
-    fun findPlantManagers(latitude: Double, longitude: Double, isPhoto: Boolean): List<PlantManager?>
+            "ORDER BY distance LIMIT :size OFFSET :page*:size", nativeQuery = true)
+    fun findPlantManagers(latitude: Double, longitude: Double, isPhoto: Boolean, page: Int, size: Int): List<PlantManager?>
 }

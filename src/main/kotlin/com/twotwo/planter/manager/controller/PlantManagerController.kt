@@ -13,6 +13,7 @@ import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
 import com.twotwo.planter.util.BaseResponseCode
+import org.springframework.data.domain.Pageable
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
@@ -26,7 +27,9 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
     @GetMapping("")
     fun getPlantManagerList(authentication: Authentication, @RequestParam(required = false, defaultValue = "0") category: List<Int>,
                             @RequestParam(required = false, defaultValue = "0") sort: Int,
-                            @RequestParam(required = false, defaultValue = "false") isPhoto: Boolean): BaseResponse<Any> {
+                            @RequestParam(required = false, defaultValue = "false") isPhoto: Boolean,
+                            @RequestParam("page", defaultValue = "0") page: Int,
+                            @RequestParam("size", defaultValue = "50") size: Int, pageable: Pageable): BaseResponse<Any> {
 
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
@@ -42,7 +45,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
             throw BaseException(BaseResponseCode.SORT_VALUE_INVALID)
         }
 
-        val plantMangers: List<GetPlantManagerListRes?> = plantManagerService.getPlantManagerList(categoryList, sort, isPhoto, user.latitude!!, user.longitude!!)
+        val plantMangers: List<GetPlantManagerListRes?> = plantManagerService.getPlantManagerList(categoryList, sort, isPhoto, user.latitude!!, user.longitude!!, page, size)
 
         return BaseResponse(plantMangers)
     }

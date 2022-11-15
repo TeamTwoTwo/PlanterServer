@@ -14,8 +14,8 @@ import java.time.format.DateTimeFormatter
 @Service
 @Transactional(readOnly = true)
 class MessageService(private val messageRepository: MessageRepository) {
-    fun getMessageList(userId: Long): Any {
-        val messages = messageRepository.findAll(userId)
+    fun getMessageList(userId: Long, page: Int, size: Int): Any {
+        val messages = messageRepository.findAll(userId, page, size)
 
         val response = arrayListOf<GetMessageGroupRes>()
 
@@ -40,7 +40,7 @@ class MessageService(private val messageRepository: MessageRepository) {
         return insertedMessage
     }
 
-    fun getMessageDetail(userId: Long, plantManagerId: Long): Any{
+    fun getMessageDetail(userId: Long, plantManagerId: Long, page: Int, size: Int): Any{
         val messages = messageRepository.findAllByUserIdAndPlantManagerIdOrderByCreatedAtDesc(userId, plantManagerId)
 
         val response = arrayListOf<GetMessageDetailRes>()

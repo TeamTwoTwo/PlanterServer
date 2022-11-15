@@ -18,8 +18,8 @@ interface MessageRepository: JpaRepository<Message, Long> {
             "    GROUP BY plant_manager_id\n" +
             ") AS m_2\n" +
             "ON m.plant_manager_id = m_2.plant_manager_id AND m.message_id = m_2.max_id\n" +
-            "ORDER BY max_id DESC;", nativeQuery = true)
-    fun findAll(userId: Long): List<Message>
+            "ORDER BY max_id DESC LIMIT :size OFFSET :page*:size", nativeQuery = true)
+    fun findAll(userId: Long, page: Int, size: Int): List<Message>
     fun findAllByUserIdAndPlantManagerIdOrderByCreatedAtDesc(userId: Long, plantManagerId: Long): List<Message>
     @Modifying
     @Query(value = "UPDATE message SET status = 'DELETED' WHERE user_id = :userId AND plant_manager_id = :plantManagerId", nativeQuery = true)
