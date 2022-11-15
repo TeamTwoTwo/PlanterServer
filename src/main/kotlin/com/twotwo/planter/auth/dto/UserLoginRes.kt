@@ -10,5 +10,7 @@ data class UserLoginRes (
     val address: String,
     val detailAddress: String?,
     val latitude: Double?,
-    val longitude: Double?
+    val longitude: Double?,
+    val simpleAddress: String?,
+    val nickname: String?
     )

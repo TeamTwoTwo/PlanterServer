@@ -34,7 +34,7 @@ class UserController(private val userService: UserService) {
             phone += "-"
             phone += user.phone.substring(7, user.phone.length)
         }
-        return BaseResponse(GetMyPageRes(user.id!!, user.name, user.profileImg, user.email, 0, user.address, user.detailAddress, phone))
+        return BaseResponse(GetMyPageRes(user.id!!, user.name, user.profileImg, user.email, 0, user.address, user.detailAddress, phone, user.nickname))
     }
 
     @PatchMapping("/{userId}/withdrawal")

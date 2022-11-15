@@ -13,6 +13,12 @@ data class UserRegisterReq(
     @field:NotNull
     val name: String,
 
+    @field:NotNull
+    val nickname: String,
+
+    @field:NotNull
+    val simpleAddress: String,
+
     @field:Length(min=8, max=20, message="2002:비밀번호 길이는 8-20이어야 합니다")
     @field:Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]*$", message="2003:비밀번호는 문자,숫자,특수문자를 모두 포함해야 합니다")
     var password: String,
@@ -25,6 +31,4 @@ data class UserRegisterReq(
 
     val address: String,
     val detailAddress: String?,
-    val latitude: Double?,
-    val longitude: Double?,
     )

@@ -9,4 +9,5 @@ data class GetMyPageRes (
     val address: String,
     val detailAddress: String?,
     val phone: String?,
+    val nickname: String?
         )

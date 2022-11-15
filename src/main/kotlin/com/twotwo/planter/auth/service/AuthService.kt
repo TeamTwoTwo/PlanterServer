@@ -32,7 +32,9 @@ class AuthService(private val userRepository: UserRepository, private val userSe
     }
 
     fun createUser(userRegisterReq: UserRegisterReq): UserRegisterRes {
-        val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone, userRegisterReq.address, userRegisterReq.detailAddress, 	37.59350051061, 127.00188398407, null, UserStatus.ACTIVE)
+        val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone,
+            userRegisterReq.address, userRegisterReq.detailAddress, 	37.59350051061, 127.00188398407,
+            null, UserStatus.ACTIVE, userRegisterReq.nickname, userRegisterReq.simpleAddress)
         val createdUser = userRepository.save(user)
         val token = jwtTokenProvider.createToken(createdUser.id!!)
 
@@ -49,7 +51,7 @@ class AuthService(private val userRepository: UserRepository, private val userSe
         val certificateCode = (SecureRandom().nextInt(100000) % 100000).toString()
 
         certificateCodeService.createSmsCertification(sendCodeReq.phone, certificateCode)
-        smsService.sendSms(sendCodeReq.phone, "[플랜터] 인증번호 [" + certificateCode + "]를 입력해 주세요. (테스트)")
+        smsService.sendSms(sendCodeReq.phone, "[플랜터] 인증번호 [" + certificateCode + "]를 입력해 주세요.")
 
         return 1
     }
