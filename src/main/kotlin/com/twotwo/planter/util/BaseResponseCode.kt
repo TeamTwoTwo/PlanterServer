@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus
 enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, message: String) {
     SUCCESS(true, 1000, HttpStatus.OK,"성공"),
 
-    EMAIL_OR_PHONE_REQUIRED(false, 2006, HttpStatus.OK, "이메일 또는 휴대폰번호를 입력해주세요"),
+    EMAIL_OR_PHONE_OR_NICKNAME_REQUIRED(false, 2006, HttpStatus.OK, "이메일, 휴대폰번호, 닉네임중 하나를 입력해주세요"),
     CATEGORY_VALUE_INVALID(false, 2007, HttpStatus.OK, "식물 관리자 카테고리 값이 잘못되었습니다"),
     SORT_VALUE_INVALID(false, 2008, HttpStatus.OK, "식물 관리자 정렬 값이 잘못되었습니다"),
     MATCHING_STATUS_INVALID(false, 2009, HttpStatus.OK, "매칭 상태 입력값은 cancel 또는 complete 여야합니다"),
@@ -28,6 +28,7 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     USER_ALREADY_DELETED(false, 3014, HttpStatus.OK, "이미 탈퇴된 사용자 입니다"),
     REVIEW_NOT_FOUND(false, 3015, HttpStatus.OK, "존재하지 않는 리뷰입니다"),
     MESSAGE_NOT_FOUND(false, 3016, HttpStatus.OK, "존재하지 않는 쪽지입니다"),
+    DUPLICATE_NICKNAME(false, 3017, HttpStatus.OK, "중복된 닉네임입니다"),
 
     AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요"),
     FILE_UPLOAD_FAIL(false, 4002, HttpStatus.OK, "파일업로드에 실패했습니다");

@@ -70,6 +70,10 @@ class AuthController(private val authService: AuthService, private val passwordE
 
     @GetMapping("/check-duplication")
     fun checkDuplicate(checkDuplicateReq: CheckDuplicateReq): BaseResponse<Any> {
+        if(checkDuplicateReq.email == null && checkDuplicateReq.phone == null && checkDuplicateReq.nickname == null) {
+            throw BaseException(EMAIL_OR_PHONE_OR_NICKNAME_REQUIRED)
+        }
+
         if(checkDuplicateReq.email != null && authService.existsEmail(checkDuplicateReq.email)) {
             throw BaseException(DUPLICATE_EMAIL)
         }
@@ -78,8 +82,8 @@ class AuthController(private val authService: AuthService, private val passwordE
             throw BaseException(DUPLICATE_PHONE)
         }
 
-        if(checkDuplicateReq.email == null && checkDuplicateReq.phone == null) {
-            throw BaseException(EMAIL_OR_PHONE_REQUIRED)
+        if(checkDuplicateReq.nickname != null && authService.existsNickname(checkDuplicateReq.nickname)) {
+            throw BaseException(DUPLICATE_NICKNAME)
         }
 
         return BaseResponse(SUCCESS)

@@ -31,6 +31,11 @@ class AuthService(private val userRepository: UserRepository, private val userSe
         //.orElseThrow{BaseException(BaseResponseCode.DUPLICATE_EMAIL)}
     }
 
+    fun existsNickname(nickname: String): Boolean {
+        return userRepository.existsByNickname(nickname)
+        //.orElseThrow{BaseException(BaseResponseCode.DUPLICATE_EMAIL)}
+    }
+
     fun createUser(userRegisterReq: UserRegisterReq): UserRegisterRes {
         val user = User(userRegisterReq.name, userRegisterReq.email, userRegisterReq.password, userRegisterReq.birth, userRegisterReq.phone,
             userRegisterReq.address, userRegisterReq.detailAddress, 	37.59350051061, 127.00188398407,
