@@ -34,4 +34,16 @@ class UserService(private val userRepository: UserRepository, private val jwtTok
 
         return user
     }
+
+    @Transactional
+    fun updateUserLocation(userId: Long, address: String, detailAddress: String, simpleAddress: String): User {
+        val user = userRepository.findUserById(userId)
+
+        user.address = address
+        user.detailAddress = detailAddress
+        user.simpleAddress = simpleAddress
+        userRepository.save(user)
+
+        return user
+    }
 }
