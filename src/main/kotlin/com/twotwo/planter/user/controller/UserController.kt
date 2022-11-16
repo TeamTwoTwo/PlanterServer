@@ -1,10 +1,7 @@
 package com.twotwo.planter.user.controller
 
 import com.twotwo.planter.user.domain.UserStatus
-import com.twotwo.planter.user.dto.GetMyPageRes
-import com.twotwo.planter.user.dto.ModifyLocationReq
-import com.twotwo.planter.user.dto.ModifyLocationRes
-import com.twotwo.planter.user.dto.WithdrawUserRes
+import com.twotwo.planter.user.dto.*
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponse
@@ -72,5 +69,19 @@ class UserController(private val userService: UserService) {
         val updatedUser = userService.updateUserLocation(userId, modifyLocationReq.address, modifyLocationReq.detailAddress, modifyLocationReq.simpleAddress)
 
         return BaseResponse(ModifyLocationRes(updatedUser.id!!, updatedUser.address, updatedUser.detailAddress, updatedUser.simpleAddress))
+    }
+
+    @PatchMapping("/{userId}")
+    fun modifyLocation(authentication: Authentication, @PathVariable userId: Long, @ModelAttribute modifyUserReq: ModifyUserReq): BaseResponse<Any> {
+        val userDetails: UserDetails = authentication.principal as UserDetails
+        val user = userService.findUser(userDetails.username)
+
+        if(user.id != userId){
+            throw BaseException(USER_ID_NOT_MATCH)
+        }
+
+        val updatedUser = userService.updateUserInfo(userId, modifyUserReq.profileImg, modifyUserReq.profileImgUrl, modifyUserReq.nickname)
+
+        return BaseResponse(ModifyUserRes(updatedUser.id!!, updatedUser.profileImg, updatedUser.nickname))
     }
 }
