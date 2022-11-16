@@ -25,7 +25,7 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
     val categoryEnumList = arrayListOf(PlantManagerCategory.HOUSE, PlantManagerCategory.FLORIST, PlantManagerCategory.EXPERT, PlantManagerCategory.SERVICE)
 
     @GetMapping("")
-    fun getPlantManagerList(authentication: Authentication, @RequestParam(required = false, defaultValue = "0") category: List<Int>,
+    fun getPlantManagerList(authentication: Authentication, @RequestParam(required = false) category: List<Int>?,
                             @RequestParam(required = false, defaultValue = "0") sort: Int,
                             @RequestParam(required = false, defaultValue = "false") isPhoto: Boolean,
                             @RequestParam("page", defaultValue = "0") page: Int,
@@ -35,12 +35,16 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
         val user = userService.findUser(userDetails.username)
 
         val categoryList = arrayListOf<PlantManagerCategory>()
-        for (item in category) {
-            categoryList.add(categoryEnumList[item])
-            if(item < 0 || item >= 4) {
-                throw BaseException(BaseResponseCode.CATEGORY_VALUE_INVALID)
+
+        if(category !== null){
+            for (item in category) {
+                if(item < 0 || item >= 4) {
+                    throw BaseException(BaseResponseCode.CATEGORY_VALUE_INVALID)
+                }
+                categoryList.add(categoryEnumList[item])
             }
         }
+
         if(sort < 0 || sort > 1) {
             throw BaseException(BaseResponseCode.SORT_VALUE_INVALID)
         }
