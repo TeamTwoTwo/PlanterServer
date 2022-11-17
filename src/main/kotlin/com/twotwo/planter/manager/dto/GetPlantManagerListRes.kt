@@ -8,6 +8,6 @@ data class GetPlantManagerListRes (
     val distance: Double,
     val isPhoto: Boolean,
     val rate: Double,
-    val description: String,
+    val description: String?,
     val minPrice: Int,
         )

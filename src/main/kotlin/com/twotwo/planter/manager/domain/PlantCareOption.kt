@@ -14,7 +14,7 @@ class PlantCareOption(name: String, price: Int, plantManager: PlantManager): Bas
     var name: String = name
     var price: Int = price
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "plant_manager_id")
     var plantManager: PlantManager = plantManager
 }

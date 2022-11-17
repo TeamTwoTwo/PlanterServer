@@ -1,5 +1,6 @@
 package com.twotwo.planter.user.controller
 
+import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.user.domain.UserStatus
 import com.twotwo.planter.user.dto.*
 import com.twotwo.planter.user.service.UserService
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/users")
-class UserController(private val userService: UserService) {
+class UserController(private val userService: UserService, private val plantManagerService: PlantManagerService) {
 
     @GetMapping("/{userId}")
     fun getMyPage(authentication: Authentication, @PathVariable userId: Long): BaseResponse<GetMyPageRes> {
@@ -84,4 +85,14 @@ class UserController(private val userService: UserService) {
 
         return BaseResponse(ModifyUserRes(updatedUser.id!!, updatedUser.profileImg, updatedUser.nickname))
     }
+
+    @GetMapping("/{userId}/plant-manager")
+    fun getPlantManagerEditPage(authentication: Authentication): BaseResponse<Any> {
+        val userDetails: UserDetails = authentication.principal as UserDetails
+        val user = userService.findUser(userDetails.username)
+
+        val response = plantManagerService.getPlantManagerByUser(user)
+        return BaseResponse(response)
+    }
+
 }

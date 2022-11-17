@@ -2,7 +2,6 @@ package com.twotwo.planter.manager.controller
 
 import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
-import com.twotwo.planter.manager.domain.PlantManagerStatus
 import com.twotwo.planter.manager.dto.*
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.user.service.UserService
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
-import kotlin.math.min
 
 @RestController
 @RequestMapping("/plant-managers")
@@ -72,11 +70,11 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
     }
 
     @PostMapping("")
-    fun updatePlantManagerMatchingActive(authentication: Authentication, @RequestBody updatePlantManagerMatchingActive: UpdatePlantManagerMatchingActive): BaseResponse<Any> {
+    fun updatePlantManager(authentication: Authentication, @ModelAttribute updatePlantManagerReq: UpdatePlantManagerReq): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val response = plantManagerService.activePlantManager(user, updatePlantManagerMatchingActive.isActive)
+        val response = plantManagerService.updatePlantManager(user, updatePlantManagerReq.isActive, updatePlantManagerReq.images, updatePlantManagerReq.introduction, updatePlantManagerReq.description, updatePlantManagerReq.price, updatePlantManagerReq.isPhoto)
 
         return BaseResponse(response)
     }

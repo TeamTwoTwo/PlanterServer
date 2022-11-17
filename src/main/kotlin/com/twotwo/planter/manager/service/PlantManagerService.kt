@@ -4,9 +4,7 @@ import com.twotwo.planter.manager.domain.PlantCareOption
 import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
 import com.twotwo.planter.manager.domain.PlantManagerStatus
-import com.twotwo.planter.manager.dto.GetPlantManagerListRes
-import com.twotwo.planter.manager.dto.GetPlantManagerOptionRes
-import com.twotwo.planter.manager.dto.UpdatePlantManagerMatchingActiveRes
+import com.twotwo.planter.manager.dto.*
 import com.twotwo.planter.manager.repository.PlantCareOptionRepository
 import com.twotwo.planter.manager.repository.PlantManagerRepository
 import com.twotwo.planter.manager.util.PlantManagerUtil
@@ -15,6 +13,7 @@ import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponseCode.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import kotlin.math.min
 
 @Service
@@ -122,33 +121,61 @@ class PlantManagerService(private val plantManagerRepository: PlantManagerReposi
     }
 
     @Transactional
-    fun activePlantManager(user: User, isActive: Boolean): UpdatePlantManagerMatchingActiveRes {
-        val plantManager = user.plantManager
+    fun updatePlantManager(user: User, isActive: Boolean, images: List<MultipartFile>?, introduction: String?, description: String?, price: Int, isPhoto: Boolean): UpdatePlantManagerRes {
+        var plantManager = user.plantManager
+        // TODO: 서비스 옵션 저장
+        // TODO: 이미지 저장
+        var plantManagerId: Long = if(user.plantManager !== null) user.plantManager!!.id!! else 0
 
-        // new plantmanager
+        // new plant manager
         if(plantManager === null && isActive){
-            val newPlantManager = PlantManager(user.name, "", "",
+            val newPlantManager = PlantManager(user.name, "", description,
                 2000, 3000,
                 user.address, user.latitude!!, user.longitude!!,
-                true, PlantManagerCategory.HOUSE, "", PlantManagerStatus.ACTIVE, user)
-            plantManagerRepository.save(newPlantManager)
-            val option = PlantCareOption("식물관리", 1000, newPlantManager)
+                isPhoto, PlantManagerCategory.HOUSE, introduction, PlantManagerStatus.ACTIVE, user)
+            val insertedPlantManager = plantManagerRepository.save(newPlantManager)
+            val option = PlantCareOption("식물관리", price, newPlantManager)
             plantCareOptionRepository.save(option)
-
-            return UpdatePlantManagerMatchingActiveRes(user.id!!, newPlantManager.id!!,true)
+            plantManagerId = insertedPlantManager.id!!
         }
         else if (plantManager !== null) {
-            if(isActive){
-                plantManager.status = PlantManagerStatus.ACTIVE
-                plantManagerRepository.save(plantManager)
-            }else {
-                plantManager.status = PlantManagerStatus.INACTIVE
-                plantManagerRepository.save(plantManager)
-            }
+            plantManager.status = if(isActive) PlantManagerStatus.ACTIVE else  PlantManagerStatus.INACTIVE
+            plantManager.introduction = introduction
+            plantManager.description = description
+            plantManager.isPhoto = isPhoto
+
+            plantManagerRepository.save(plantManager)
         }
         else { // user.plantManager === null && !isActive
             throw BaseException(USER_PLANTMANAGER_NOT_FOUND)
         }
-        return UpdatePlantManagerMatchingActiveRes(user.id!!, plantManager?.id!!, plantManager.status === PlantManagerStatus.ACTIVE)
+
+        val _plantManager = getPlantManager(plantManagerId)
+        val careOptions = arrayListOf<CareOption>()
+        for(item in _plantManager.plantCares!!){
+            careOptions.add(CareOption(item!!.id!!, item.name, item.price))
+        }
+        return UpdatePlantManagerRes(_plantManager.id!!, _plantManager.status === PlantManagerStatus.ACTIVE, arrayListOf(),
+            _plantManager.description, _plantManager.introduction, careOptions, _plantManager.isPhoto)
+    }
+
+    @Transactional
+    fun getPlantManagerByUser(user: User): GetPlantManagerEditPageRes {
+
+        if(user.plantManager === null){
+            throw BaseException(USER_PLANTMANAGER_NOT_FOUND)
+        }
+
+        val plantManager = getPlantManager(user.plantManager!!.id!!)
+
+        val careOptions = arrayListOf<CareOption>()
+            for(item in plantManager.plantCares){
+                careOptions.add(CareOption(item!!.id!!, item.name, item.price))
+            }
+
+
+        val response = GetPlantManagerEditPageRes(plantManager.id!!, plantManager.status === PlantManagerStatus.ACTIVE, arrayListOf("https://baris-bucket.s3.ap-northeast-2.amazonaws.com/%E1%84%83%E1%85%A1%E1%84%8B%E1%85%AE%E1%86%AB%E1%84%85%E1%85%A9%E1%84%83%E1%85%B3+(3).jpeg"), plantManager.introduction, plantManager.description, careOptions, plantManager.isPhoto)
+
+        return response
     }
 }
