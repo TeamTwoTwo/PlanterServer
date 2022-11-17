@@ -1,13 +1,9 @@
 package com.twotwo.planter.manager.controller
 
-import com.twotwo.planter.auth.service.AuthService
 import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
 import com.twotwo.planter.manager.domain.PlantManagerStatus
-import com.twotwo.planter.manager.dto.CreatePlantManagerReq
-import com.twotwo.planter.manager.dto.GetPlantManagerListRes
-import com.twotwo.planter.manager.dto.GetPlantManagerOptionRes
-import com.twotwo.planter.manager.dto.GetPlantManagerRes
+import com.twotwo.planter.manager.dto.*
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.user.service.UserService
 import com.twotwo.planter.util.BaseException
@@ -76,16 +72,13 @@ class PlantManagerController(private val plantManagerService: PlantManagerServic
     }
 
     @PostMapping("")
-    fun createPlantManager(@RequestBody createPlantManagerReq: CreatePlantManagerReq): BaseResponse<Any> {
+    fun updatePlantManagerMatchingActive(authentication: Authentication, @RequestBody updatePlantManagerMatchingActive: UpdatePlantManagerMatchingActive): BaseResponse<Any> {
+        val userDetails: UserDetails = authentication.principal as UserDetails
+        val user = userService.findUser(userDetails.username)
 
-        val plantManager = PlantManager(createPlantManagerReq.name, createPlantManagerReq.profileImg, createPlantManagerReq.description,
-            createPlantManagerReq.caringPrice, createPlantManagerReq.pruningPrice,
-            createPlantManagerReq.address, createPlantManagerReq.latitude, createPlantManagerReq.longitude,
-            createPlantManagerReq.is_photo, createPlantManagerReq.category, createPlantManagerReq.introduction, PlantManagerStatus.ACTIVE)
+        val response = plantManagerService.activePlantManager(user, updatePlantManagerMatchingActive.isActive)
 
-        plantManagerService.createPlantManagerList(plantManager)
-
-        return BaseResponse(BaseResponseCode.SUCCESS)
+        return BaseResponse(response)
     }
 
     @GetMapping("/{plantManagerId}/option")

@@ -29,6 +29,7 @@ enum class BaseResponseCode(isSuccess: Boolean, code: Int, status: HttpStatus, m
     REVIEW_NOT_FOUND(false, 3015, HttpStatus.OK, "존재하지 않는 리뷰입니다"),
     MESSAGE_NOT_FOUND(false, 3016, HttpStatus.OK, "존재하지 않는 쪽지입니다"),
     DUPLICATE_NICKNAME(false, 3017, HttpStatus.OK, "중복된 닉네임입니다"),
+    USER_PLANTMANAGER_NOT_FOUND(false, 3018, HttpStatus.OK, "식물전문가 등록이 되지 않은 사용자입니다"),
 
     AUTHENTICATE_FAILED(false, 4000, HttpStatus.OK, "JWT 토큰을 확인해주세요"),
     FILE_UPLOAD_FAIL(false, 4002, HttpStatus.OK, "파일업로드에 실패했습니다");

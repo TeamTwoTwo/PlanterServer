@@ -2,11 +2,12 @@ package com.twotwo.planter.manager.domain
 
 import com.twotwo.planter.matching.domain.Matching
 import com.twotwo.planter.report.domain.Report
+import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseTime
 import javax.persistence.*
 
 @Entity
-class PlantManager(name: String, profileImg: String, description: String, caringPrice: Int, pruningPrice: Int, address: String, latitude: Double, longitude: Double, isPhoto: Boolean, category: PlantManagerCategory, introduction: String, status: PlantManagerStatus): BaseTime() {
+class PlantManager(name: String, profileImg: String, description: String, caringPrice: Int, pruningPrice: Int, address: String, latitude: Double, longitude: Double, isPhoto: Boolean, category: PlantManagerCategory, introduction: String, status: PlantManagerStatus, user: User): BaseTime() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plant_manager_id")
@@ -43,4 +44,8 @@ class PlantManager(name: String, profileImg: String, description: String, caring
 
     @OneToMany(mappedBy = "plantManager")
     var reports: List<Report?>? = ArrayList<Report>()
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    var user: User? = user
 }

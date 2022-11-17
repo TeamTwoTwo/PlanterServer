@@ -1,12 +1,16 @@
 package com.twotwo.planter.manager.service
 
+import com.twotwo.planter.manager.domain.PlantCareOption
 import com.twotwo.planter.manager.domain.PlantManager
 import com.twotwo.planter.manager.domain.PlantManagerCategory
 import com.twotwo.planter.manager.domain.PlantManagerStatus
 import com.twotwo.planter.manager.dto.GetPlantManagerListRes
 import com.twotwo.planter.manager.dto.GetPlantManagerOptionRes
+import com.twotwo.planter.manager.dto.UpdatePlantManagerMatchingActiveRes
+import com.twotwo.planter.manager.repository.PlantCareOptionRepository
 import com.twotwo.planter.manager.repository.PlantManagerRepository
 import com.twotwo.planter.manager.util.PlantManagerUtil
+import com.twotwo.planter.user.domain.User
 import com.twotwo.planter.util.BaseException
 import com.twotwo.planter.util.BaseResponseCode.*
 import org.springframework.stereotype.Service
@@ -15,10 +19,10 @@ import kotlin.math.min
 
 @Service
 @Transactional(readOnly = true)
-class PlantManagerService(private val plantManagerepository: PlantManagerRepository, private val plantManagerUtil: PlantManagerUtil) {
+class PlantManagerService(private val plantManagerRepository: PlantManagerRepository, private val plantCareOptionRepository: PlantCareOptionRepository, private val plantManagerUtil: PlantManagerUtil) {
     fun getPlantManagerList(category: List<PlantManagerCategory>, sort: Int, isPhoto: Boolean, latitude: Double, longitude: Double, page: Int, size: Int): List<GetPlantManagerListRes?> {
         val categoryEnumList = arrayListOf(PlantManagerCategory.HOUSE, PlantManagerCategory.FLORIST, PlantManagerCategory.EXPERT, PlantManagerCategory.SERVICE)
-        val filteredManagers: List<PlantManager> = plantManagerepository.findPlantManagers(isPhoto, page, size)
+        val filteredManagers: List<PlantManager> = plantManagerRepository.findPlantManagers(isPhoto, page, size)
 
         val response = arrayListOf<GetPlantManagerListRes?>()
         for (item in filteredManagers) {
@@ -83,7 +87,7 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
     }
 
     fun getPlantManager(plantManagerId: Long): PlantManager {
-        val plantManager = plantManagerepository.findOneById(plantManagerId)
+        val plantManager = plantManagerRepository.findOneById(plantManagerId)
 
         if(plantManager == null){
             throw BaseException(PLANTER_MANAGER_NOT_FOUND)
@@ -95,7 +99,7 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
     fun createPlantManagerList(
         plantManager: PlantManager
     ) {
-        plantManagerepository.save(plantManager)
+        plantManagerRepository.save(plantManager)
     }
 
     fun getPlantCareOption(plantManagerId: Long): List<GetPlantManagerOptionRes> {
@@ -114,6 +118,37 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
     @Transactional
     fun blockPlantManager(plantManager: PlantManager) {
         plantManager.status = PlantManagerStatus.BLOCKED
-        plantManagerepository.save(plantManager)
+        plantManagerRepository.save(plantManager)
+    }
+
+    @Transactional
+    fun activePlantManager(user: User, isActive: Boolean): UpdatePlantManagerMatchingActiveRes {
+        val plantManager = user.plantManager
+
+        // new plantmanager
+        if(plantManager === null && isActive){
+            val newPlantManager = PlantManager(user.name, "", "",
+                2000, 3000,
+                user.address, user.latitude!!, user.longitude!!,
+                true, PlantManagerCategory.HOUSE, "", PlantManagerStatus.ACTIVE, user)
+            plantManagerRepository.save(newPlantManager)
+            val option = PlantCareOption("식물관리", 1000, newPlantManager)
+            plantCareOptionRepository.save(option)
+
+            return UpdatePlantManagerMatchingActiveRes(user.id!!, newPlantManager.id!!,true)
+        }
+        else if (plantManager !== null) {
+            if(isActive){
+                plantManager.status = PlantManagerStatus.ACTIVE
+                plantManagerRepository.save(plantManager)
+            }else {
+                plantManager.status = PlantManagerStatus.INACTIVE
+                plantManagerRepository.save(plantManager)
+            }
+        }
+        else { // user.plantManager === null && !isActive
+            throw BaseException(USER_PLANTMANAGER_NOT_FOUND)
+        }
+        return UpdatePlantManagerMatchingActiveRes(user.id!!, plantManager?.id!!, plantManager.status === PlantManagerStatus.ACTIVE)
     }
 }
