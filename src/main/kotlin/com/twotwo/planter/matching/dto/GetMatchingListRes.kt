@@ -2,6 +2,7 @@ package com.twotwo.planter.matching.dto
 
 data class GetMatchingListRes (
     val matchingId: Long,
+    val userId: Long,
     val plantManagerId: Long,
     val profileImg: String?,
     val name: String,

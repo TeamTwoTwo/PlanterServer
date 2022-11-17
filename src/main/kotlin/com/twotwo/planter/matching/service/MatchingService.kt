@@ -26,6 +26,10 @@ class MatchingService(private val matchingRepository: MatchingRepository, privat
         return matchingRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
     }
 
+    fun getPlantManagerMatchingList(plantManagerId: Long): List<Matching> {
+        return matchingRepository.findAllByPlantManagerIdOrderByCreatedAtDesc(plantManagerId)
+    }
+
     fun getMatchingDetail(matchingId: Long): Any {
         val matching = matchingRepository.findMatchingById(matchingId)
         if(matching == null){

@@ -2,6 +2,7 @@ package com.twotwo.planter.matching.controller
 
 import com.twotwo.planter.manager.service.PlantManagerService
 import com.twotwo.planter.manager.util.PlantManagerUtil
+import com.twotwo.planter.matching.domain.Matching
 import com.twotwo.planter.matching.domain.MatchingStatus
 import com.twotwo.planter.matching.domain.PickUpType
 import com.twotwo.planter.matching.dto.*
@@ -21,25 +22,50 @@ import javax.validation.Valid
 @RequestMapping("")
 class MatchingController(private val matchingService: MatchingService, private val userService: UserService, private val plantManagerService: PlantManagerService, private val plantManagerUtil:  PlantManagerUtil) {
     @GetMapping("/matchings")
-    fun getMatchingList(authentication: Authentication): BaseResponse<Any> {
+    fun getMatchingList(authentication: Authentication, @RequestParam("type", defaultValue = "0") type: Int): BaseResponse<Any> {
         val userDetails: UserDetails = authentication.principal as UserDetails
         val user = userService.findUser(userDetails.username)
 
-        val matchings = matchingService.getMatchingList(user.id!!)
+        var matchings: List<Matching>
         val response = arrayListOf<GetMatchingListRes>()
 
-        for (matching in matchings) {
-            response.add(
-                GetMatchingListRes(
-                    matching.id!!,
-                    matching.plantManager.id!!,
-                    matching.plantManager.profileImg,
-                    matching.plantManager.name,
-                    plantManagerUtil.getCategoryInt(matching.plantManager.category),
-                    matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-                    matching.status.toString().lowercase()
+        //recieved matching
+        if(type == 1){
+            if(user.plantManager === null){
+                throw BaseException(USER_PLANTMANAGER_NOT_FOUND)
+            }
+            matchings = matchingService.getPlantManagerMatchingList(user.plantManager!!.id!!)
+            for (matching in matchings) {
+                response.add(
+                    GetMatchingListRes(
+                        matching.id!!,
+                        matching.user.id!!,
+                        matching.plantManager.id!!,
+                        matching.user.profileImg,
+                        matching.user.name,
+                        0,
+                        matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                        matching.status.toString().lowercase()
+                    )
                 )
-            )
+            }
+        }
+        else {
+            matchings = matchingService.getMatchingList(user.id!!)
+            for (matching in matchings) {
+                response.add(
+                    GetMatchingListRes(
+                        matching.id!!,
+                        matching.user.id!!,
+                        matching.plantManager.id!!,
+                        matching.plantManager.profileImg,
+                        matching.plantManager.name,
+                        plantManagerUtil.getCategoryInt(matching.plantManager.category),
+                        matching.createdAt!!.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                        matching.status.toString().lowercase()
+                    )
+                )
+            }
         }
 
         return BaseResponse(response)
