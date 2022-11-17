@@ -75,7 +75,10 @@ class PlantManagerService(private val plantManagerepository: PlantManagerReposit
             comparator = compareBy { it!!.rate }
         }
         response.sortWith(comparator)
-        response.reverse()
+
+        if(sort == 1){
+            response.reverse()
+        }
         return response
     }
 
